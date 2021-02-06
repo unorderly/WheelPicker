@@ -10,7 +10,7 @@ import WheelPicker
 
 struct ContentView: View {
     var body: some View {
-        WheelPicker()
+        WheelPicker_Previews.previews
     }
 }
 

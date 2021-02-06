@@ -1,71 +1,49 @@
 import SwiftUI
 import Combine
 
-public struct WheelPicker: View {
-    @State var appeared: Int = 0
-    @State var disappeared: Int = 0
+struct WheelPicker<Cell: View, Center: View, Value: Hashable>: UIViewRepresentable {
 
-    @State var offset: CGFloat = 0
+    let values: [Value]
 
-    @State var selected: CellView = CellView(value: 0)
+    @Binding var selected: Value
 
-    public init() { }
+    let centerSize: Int
 
-    public var body: some View {
-        VStack {
-            Picker("", selection: $selected) {
-                ForEach(0..<10) {
-                    Text("\($0)")
-                        .tag(CellView(value: $0))
-                }
-            }
+    let cell: (Value) -> Cell
+    let center: (Value) -> Center
 
-            ZStack {
-                Wrapper(selected: $selected)
-//                Text("\(self.selected.value)")
-//                    .padding(30)
-//                    .background(Color.red)
-//                    .allowsHitTesting(false)
-            }
+    typealias UIViewType = CollectionPickerView<UIHostingCell<Cell>, UIHostingView<Center>, Value>
 
-//            Text("Hellloooo")
-//                .padding()
-//                .background(Color.green)
-        }
+    init(_ values: [Value],
+         selected: Binding<Value>,
+         centerSize: Int = 1,
+         cell: @escaping (Value) -> Cell,
+         center: @escaping (Value) -> Center) {
+        self.values = values
+        self._selected = selected
+        self.cell = cell
+        self.center = center
+        self.centerSize = centerSize
     }
-
-}
-
-struct CellView: View, Hashable {
-
-    let value: Int
-
-    var body: some View {
-        Text("Item \(value)")
-            .padding(20)
-    }
-}
-
-struct Wrapper: UIViewRepresentable {
-
-    @Binding var selected: CellView
-
-    typealias UIViewType = CollectionPickerView<SwiftUICollectionViewCell<CellView>, UIHostingView<CellView>>
 
     func updateUIView(_ picker: UIViewType, context: Context) {
+        picker.values = values
         picker.select(value: selected)
+        picker.centerSize = centerSize
     }
 
 
     func makeUIView(context: Context) -> UIViewType {
-        let cells = (0..<10)
-            .map { CellView(value: $0) }
-        let view = UIViewType(values: cells, selected: self.selected)
-        context.coordinator.listing(to: view.publisher)
-        return view
+        let picker = UIViewType(values: self.values,
+                              selected: self.selected,
+                              configureCell: { $0.set(value: self.cell($1)) },
+                              configureCenter: { $0.set(value: self.center($1)) })
+        picker.centerSize = centerSize
+        context.coordinator.listing(to: picker.publisher)
+        return picker
     }
 
-    func makeCoordinator() -> PickerModel<CellView> {
+    func makeCoordinator() -> PickerModel<Value> {
         return PickerModel(selected: $selected)
     }
 }
@@ -89,7 +67,7 @@ class PickerModel<Value: Hashable> {
     }
 }
 
-class UIHostingView<Content: View>: UIView, CollectionCenter where Content: Hashable {
+final class UIHostingView<Content: View>: UIView {
     func set(value content: Content) {
         self.subviews.forEach {
             $0.removeFromSuperview()
@@ -110,7 +88,7 @@ class UIHostingView<Content: View>: UIView, CollectionCenter where Content: Hash
     }
 }
 
-final class SwiftUICollectionViewCell<Content: View>: UICollectionViewCell, CollectionCell where Content: Hashable {
+final class UIHostingCell<Content: View>: UICollectionViewCell {
     func set(value content: Content) {
         contentView.subviews.forEach {
             $0.removeFromSuperview()
@@ -131,16 +109,65 @@ final class SwiftUICollectionViewCell<Content: View>: UICollectionViewCell, Coll
     }
 }
 
-struct WheelPicker_Previews: PreviewProvider {
+public struct WheelPicker_Previews: PreviewProvider {
 
     struct Preview: View {
-        @State var value: Int = 1
+        @State var center: Int = 1
 
-        var body: some View {
-            WheelPicker()
+        @State var selected: Int = 0
+
+        @State var values: [Int] = Array(0..<100)
+
+        public init() { }
+
+        public var body: some View {
+            VStack {
+                Text("Steps: \(center)")
+                Stepper("Center", value: $center)
+                Picker("Values", selection: $selected) {
+                    ForEach(values, id: \.self) {
+                        Text("\($0)")
+                            .tag($0)
+                    }
+                }
+
+                WheelPicker(values,
+                            selected: $selected,
+                            centerSize: center,
+                            cell: {
+                                Text("\($0)")
+                                    .font(.headline)
+                                    .padding()
+                            },
+                            center: {
+                                Text("\($0) - \($0 + center - 1)")
+                                    .font(.headline)
+                                    .padding()
+                                    .frame(minWidth: 100)
+                                    .background(Color.red)
+                                    .cornerRadius(10)
+                                    .shadow(color: Color.black.opacity(0.12), radius: 4)
+                            })
+                    .accessibility(label: Text("Time Picker"))
+                    .accessibility(hint: Text(hint))
+            }
+        }
+
+        var hint: String {
+            guard let index = self.values.firstIndex(of: selected) else {
+                return ""
+            }
+            var hint = ""
+            if index > self.values.startIndex {
+                hint += "Up: \(self.values[index-1])"
+            }
+            if index < self.values.endIndex - 1 {
+                hint += "Down: \(self.values[index+1])"
+            }
+            return hint
         }
     }
-    static var previews: some View {
+    public static var previews: some View {
         Preview()
     }
 }

@@ -1,83 +1,138 @@
 import UIKit
 import Combine
 
-protocol CollectionCell: UICollectionViewCell {
-    associatedtype Value: Hashable
-
-    func set(value: Value)
+public protocol AccessibleValue {
+    var accessibilityText: String { get }
 }
 
-protocol CollectionCenter: UIView {
-    associatedtype Value: Hashable
-
-    func set(value: Value)
-}
-
-class CollectionPickerView<Cell: CollectionCell, Center: CollectionCenter>: UICollectionView, UICollectionViewDelegate, UICollectionViewDelegateFlowLayout, UIScrollViewDelegate where Cell.Value == Center.Value {
-    var values: [Cell.Value] = [] {
+class CollectionPickerView<Cell: UICollectionViewCell, Center: UIView, Value: Hashable>: UIView, UICollectionViewDelegate, UICollectionViewDelegateFlowLayout, UIScrollViewDelegate {
+    var values: [Value] = [] {
         didSet {
-            self.reload()
+            if values != oldValue {
+                self.reload()
+            }
         }
     }
 
-    private lazy var diffDataSource: UICollectionViewDiffableDataSource<Int, Cell.Value> = {
-        let cellRegistration = UICollectionView.CellRegistration<Cell, Cell.Value> { cell, _, value in
-            cell.set(value: value)
+    private lazy var diffDataSource: UICollectionViewDiffableDataSource<Int, Value> = {
+        let cellRegistration = UICollectionView.CellRegistration<Cell, Value> { cell, _, value in
+            self.configureCell(cell, value)
         }
-
-//        let centerRegistration = UICollectionView.SupplementaryRegistration<Center>(elementKind: "center") { view, _, _ in
-////            view
-//        }
-
-        let dataSource = UICollectionViewDiffableDataSource<Int, Cell.Value>(collectionView: self) { collectionView, indexPath, id in
+        let dataSource = UICollectionViewDiffableDataSource<Int, Value>(collectionView: self.collectionView) { collectionView, indexPath, id in
             return collectionView.dequeueConfiguredReusableCell(using: cellRegistration,
                                                                 for: indexPath,
                                                                 item: id)
         }
-//        dataSource.supplementaryViewProvider = { collectionView, kind, indexPath in
-//            if kind == "center" && indexPath == IndexPath(item: 0, section: 0) {
-//                return collectionView.dequeueConfiguredReusableSupplementary(using: centerRegistration, for: indexPath)
-//            }
-//            return nil
-//        }
         return dataSource
     }()
 
     private lazy var sizingCell: Cell = Cell()
 
-    public let publisher: CurrentValueSubject<Cell.Value, Never>
+    private let selectionFeedback = UISelectionFeedbackGenerator()
+
+    public let publisher: CurrentValueSubject<Value, Never>
 
     private var selectedIndex: Int {
         didSet {
             if self.values.indices.contains(self.selectedIndex), oldValue != self.selectedIndex {
                 self.publisher.send(values[self.selectedIndex])
                 self.layout?.selected = values[self.selectedIndex]
+                self.updateAccessibility()
             }
         }
     }
 
-    init(values: [Cell.Value], selected: Cell.Value) {
+    let configureCell: (Cell, Value) -> Void
+
+    var centerSize: Int  {
+        get { self.layout?.centerSize ?? 1}
+        set{ self.layout?.centerSize = newValue }
+    }
+  
+
+    init(values: [Value],
+         selected: Value,
+         configureCell: @escaping (Cell, Value) -> Void,
+         configureCenter: @escaping (Center, Value) -> Void) {
+        self.configureCell = configureCell
         self.publisher = CurrentValueSubject(selected)
         self.selectedIndex = values.firstIndex(of: selected) ?? 0
-        let layout = Layout<Center>(selected: selected)
-        super.init(frame: .zero, collectionViewLayout: layout)
-        self.delegate = self
-        self.dataSource = self.diffDataSource
-        self.values = values
+        super.init(frame: .zero)
 
-        self.isScrollEnabled = true
-        self.showsHorizontalScrollIndicator = false
-        self.showsVerticalScrollIndicator = false
-        self.decelerationRate = UIScrollView.DecelerationRate.fast
-        self.backgroundColor = UIColor.clear
+        self.backgroundColor = .clear
 
-        self.layer.sublayerTransform = {
+        let layout = Layout<Center, Value>(selected: selected, configureCenter: configureCenter)
+
+        let cv = UICollectionView(frame: .zero, collectionViewLayout: layout)
+        self.collectionView = cv
+        cv.delegate = self
+        cv.dataSource = self.diffDataSource
+        cv.isScrollEnabled = true
+        cv.showsHorizontalScrollIndicator = false
+        cv.showsVerticalScrollIndicator = false
+        cv.decelerationRate = UIScrollView.DecelerationRate.fast
+        cv.backgroundColor = .clear
+        cv.layer.sublayerTransform = {
             var transform = CATransform3DIdentity;
             transform.m34 = -1.0 / 2000;
             return transform;
         }()
 
+        cv.translatesAutoresizingMaskIntoConstraints = false
+        self.addSubview(cv)
+        NSLayoutConstraint.activate([
+            cv.topAnchor.constraint(equalTo: self.topAnchor, constant: 0),
+            cv.leftAnchor.constraint(equalTo: self.leftAnchor, constant: 0),
+            cv.bottomAnchor.constraint(equalTo: self.bottomAnchor, constant: 0),
+            cv.rightAnchor.constraint(equalTo: self.rightAnchor, constant: 0),
+        ])
+
+        self.values = values
+
         self.reload()
+
+        self.isAccessibilityElement = true
+        self.accessibilityTraits.insert(UIAccessibilityTraits.adjustable)
+        self.updateAccessibility()
+    }
+
+    override func accessibilityIncrement() {
+        let new = self.selectedIndex + 1
+        if self.values.indices.contains(new) {
+            self.scrollToItem(at: new)
+            self.selectionFeedback.selectionChanged()
+        }
+    }
+
+    override func accessibilityDecrement() {
+        let new = self.selectedIndex - 1
+        if self.values.indices.contains(new) {
+            self.scrollToItem(at: new)
+            self.selectionFeedback.selectionChanged()
+        }
+    }
+
+    private func updateAccessibility() {
+        let value = self.values[self.selectedIndex]
+        self.accessibilityValue = (value as? AccessibleValue)?.accessibilityText ?? (value as? CustomStringConvertible)?.description
+    }
+
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        self.layer.mask = {
+            let maskLayer = CAGradientLayer()
+            maskLayer.frame = self.bounds
+            maskLayer.colors = [
+                UIColor.clear.cgColor,
+                UIColor.black.cgColor,
+                UIColor.black.cgColor,
+                UIColor.clear.cgColor]
+            maskLayer.locations = [0.0, 0.33, 0.66, 1.0]
+            maskLayer.startPoint = CGPoint(x: 0.0, y: 0.0)
+            maskLayer.endPoint = CGPoint(x: 0.0, y: 1.0)
+            return maskLayer
+        }()
+        self.sizeCache.removeAll()
     }
 
     required init?(coder: NSCoder) {
@@ -85,19 +140,21 @@ class CollectionPickerView<Cell: CollectionCell, Center: CollectionCenter>: UICo
     }
 
     func reload() {
-        var snapshot = NSDiffableDataSourceSnapshot<Int, Cell.Value>()
+        self.sizeCache.removeAll()
+        var snapshot = NSDiffableDataSourceSnapshot<Int, Value>()
         snapshot.appendSections([0])
         snapshot.appendItems(values, toSection: 0)
 
         diffDataSource.apply(snapshot, animatingDifferences: false, completion: nil)
-
-//        self.collectionViewLayout.invalidateLayout()
+        self.updateAccessibility()
     }
 
 
-    var layout: Layout<Center>? {
-        return self.collectionViewLayout as? Layout<Center>
+    private var layout: Layout<Center, Value>? {
+        return self.collectionView.collectionViewLayout as? Layout<Center, Value>
     }
+
+    private weak var collectionView: UICollectionView!
 
     func offsetForItem(at index: Int) -> CGFloat {
         var offset = self.layout?.originalAttributesForItem(at: IndexPath(item: index, section: 0))?.frame.midY ?? 0
@@ -105,11 +162,13 @@ class CollectionPickerView<Cell: CollectionCell, Center: CollectionCenter>: UICo
         return offset
     }
 
-    func select(value: Cell.Value) {
-        if !self.isDragging, !self.isDecelerating,
+    func select(value: Value) {
+        if !self.collectionView.isDragging, !self.collectionView.isDecelerating,
            let index = self.values.firstIndex(of: value),
            index != selectedIndex {
-            self.scrollToItem(at: index)
+            DispatchQueue.main.async {
+                self.scrollToItem(at: index)
+            }
         }
     }
 
@@ -118,29 +177,30 @@ class CollectionPickerView<Cell: CollectionCell, Center: CollectionCenter>: UICo
             return
         }
 
-        self.setContentOffset(
+        self.collectionView.setContentOffset(
             CGPoint(
-                x: self.contentOffset.x,
+                x: self.collectionView.contentOffset.x,
                 y: offsetForItem(at: index)),
             animated: animated)
         self.selectedIndex = index
     }
 
     func didScroll(end: Bool) {
-        let mid = CGRect(x: self.contentOffset.x + self.bounds.width / 2,
-                        y: self.contentOffset.y + self.bounds.height / 2,
+        let mid = CGRect(x: self.collectionView.contentOffset.x + self.bounds.width / 2,
+                         y: self.collectionView.contentOffset.y + self.bounds.height / 2,
                         width: 1,
                         height: 1)
-         let cells = visibleCells.filter({ cell in
+        let cells = collectionView.visibleCells.filter({ cell in
             cell.frame.intersects(mid)
          })
-         .compactMap(self.indexPath(for:))
+        .compactMap(self.collectionView.indexPath(for:))
          .sorted()
 
         if let index = cells.first?.item {
-
+            if index != self.selectedIndex {
+                self.selectionFeedback.selectionChanged()
+            }
             self.selectedIndex = index
-
             if end {
                 self.scrollToItem(at: index, animated: true)
             }
@@ -156,11 +216,27 @@ class CollectionPickerView<Cell: CollectionCell, Center: CollectionCenter>: UICo
     }
 
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
-        self.didScroll(end: false)
+        if self.collectionView.isDragging {
+            self.didScroll(end: false)
+        }
+    }
+
+    func scrollViewWillBeginDragging(_ scrollView: UIScrollView) {
+        self.selectionFeedback.prepare()
     }
 
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        self.scrollToItem(at: indexPath.item)
+        guard self.selectedIndex != indexPath.item else {
+            return
+        }
+
+        self.selectionFeedback.selectionChanged()
+
+        if indexPath.item > selectedIndex {
+            self.scrollToItem(at: indexPath.item - centerSize + 1)
+        } else {
+            self.scrollToItem(at: indexPath.item)
+        }
     }
 
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAt section: Int) -> UIEdgeInsets {
@@ -175,13 +251,22 @@ class CollectionPickerView<Cell: CollectionCell, Center: CollectionCenter>: UICo
         )
     }
 
+    private var sizeCache: [AnyHashable: CGSize] = [:]
+
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
         guard let value = self.diffDataSource.itemIdentifier(for: indexPath) else {
             return .zero
         }
-        self.sizingCell.set(value: value)
-        let size = self.sizingCell.systemLayoutSizeFitting(CGSize(width: collectionView.bounds.width, height: 0))
-        return CGSize(width: collectionView.bounds.width, height: size.height)
+        if let cached = sizeCache[value] {
+            return cached
+        } else {
+            self.configureCell(sizingCell, value)
+            let size = self.sizingCell.systemLayoutSizeFitting(CGSize(width: collectionView.bounds.width, height: 0))
+
+            let new = CGSize(width: collectionView.bounds.width, height: size.height)
+            sizeCache[value] = new
+            return new
+        }
     }
 
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumInteritemSpacingForSectionAt section: Int) -> CGFloat {
