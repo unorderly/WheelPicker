@@ -1,7 +1,34 @@
 import SwiftUI
 import Combine
 
-struct WheelPicker<Cell: View, Center: View, Value: Hashable>: UIViewRepresentable {
+public struct WheelPicker<Cell: View, Center: View, Value: Hashable>: View {
+    let values: [Value]
+
+    @Binding var selected: Value
+
+    let centerSize: Int
+
+    let cell: (Value) -> Cell
+    let center: (Value) -> Center
+
+    public init(_ values: [Value],
+         selected: Binding<Value>,
+         centerSize: Int = 1,
+         cell: @escaping (Value) -> Cell,
+         center: @escaping (Value) -> Center) {
+        self.values = values
+        self._selected = selected
+        self.cell = cell
+        self.center = center
+        self.centerSize = centerSize
+    }
+
+    public var body: some View {
+        PickerWrapper(values, selected: $selected, centerSize: centerSize, cell: cell, center: center)
+    }
+}
+
+struct PickerWrapper<Cell: View, Center: View, Value: Hashable>: UIViewRepresentable {
 
     let values: [Value]
 
@@ -109,7 +136,7 @@ final class UIHostingCell<Content: View>: UICollectionViewCell {
     }
 }
 
-public struct WheelPicker_Previews: PreviewProvider {
+struct WheelPicker_Previews: PreviewProvider {
 
     struct Preview: View {
         @State var center: Int = 1
