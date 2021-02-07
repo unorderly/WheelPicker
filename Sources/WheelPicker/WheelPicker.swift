@@ -88,7 +88,6 @@ class PickerModel<Value: Hashable> {
         DispatchQueue.main.async {
             self.cancallable?.cancel()
             self.cancallable = publisher
-                .map { print("Selected: \($0)"); return $0 }
                 .assign(to: \.selected, on: self)
         }
     }

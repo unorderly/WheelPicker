@@ -70,7 +70,7 @@ class CollectionPickerView<Cell: UICollectionViewCell, Center: UIView, Value: Ha
         cv.isScrollEnabled = true
         cv.showsHorizontalScrollIndicator = false
         cv.showsVerticalScrollIndicator = false
-        cv.decelerationRate = UIScrollView.DecelerationRate.fast
+        cv.decelerationRate = UIScrollView.DecelerationRate.normal
         cv.backgroundColor = .clear
         cv.layer.sublayerTransform = {
             var transform = CATransform3DIdentity;
