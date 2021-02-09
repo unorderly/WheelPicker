@@ -9,6 +9,12 @@ class CollectionPickerView<Cell: UICollectionViewCell, Center: UIView, Value: Ha
     var values: [Value] = [] {
         didSet {
             if values != oldValue {
+                let selected = oldValue[self.selectedIndex]
+                if let index = self.values.firstIndex(of: selected) {
+                    self.selectedIndex = index
+                } else {
+                    self.selectedIndex = 0
+                }
                 self.reload()
             }
         }
@@ -35,7 +41,9 @@ class CollectionPickerView<Cell: UICollectionViewCell, Center: UIView, Value: Ha
     private var selectedIndex: Int {
         didSet {
             if self.values.indices.contains(self.selectedIndex), oldValue != self.selectedIndex {
-                self.publisher.send(values[self.selectedIndex])
+                DispatchQueue.main.async {
+                    self.publisher.send(self.values[self.selectedIndex])
+                }
                 self.layout?.selected = values[self.selectedIndex]
                 self.updateAccessibility()
             }
@@ -117,6 +125,7 @@ class CollectionPickerView<Cell: UICollectionViewCell, Center: UIView, Value: Ha
         self.accessibilityValue = (value as? AccessibleValue)?.accessibilityText ?? (value as? CustomStringConvertible)?.description
     }
 
+
     override func layoutSubviews() {
         super.layoutSubviews()
         self.layer.mask = {
@@ -133,10 +142,20 @@ class CollectionPickerView<Cell: UICollectionViewCell, Center: UIView, Value: Ha
             return maskLayer
         }()
         self.sizeCache.removeAll()
+
     }
 
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+
+    private var initializePosition = false
+
+    func collectionView(_ collectionView: UICollectionView, willDisplay cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
+        if !initializePosition {
+            self.initializePosition = true
+            self.scrollToItem(at: self.selectedIndex, animated: false)
+        }
     }
 
     func reload() {
@@ -145,7 +164,9 @@ class CollectionPickerView<Cell: UICollectionViewCell, Center: UIView, Value: Ha
         snapshot.appendSections([0])
         snapshot.appendItems(values, toSection: 0)
 
-        diffDataSource.apply(snapshot, animatingDifferences: false, completion: nil)
+        diffDataSource.apply(snapshot, animatingDifferences: false) {
+            self.scrollToItem(at: self.selectedIndex, animated: false)
+        }
         self.updateAccessibility()
     }
 

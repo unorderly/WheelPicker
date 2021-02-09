@@ -11,7 +11,7 @@ import WheelPicker
 struct ContentView: View {
     @State var center: Int = 1
 
-    @State var selected: Int = 0
+    @State var selected: Int = 50
 
     @State var values: [Int] = Array(0..<100)
 
@@ -24,6 +24,10 @@ struct ContentView: View {
                     Text("\($0)")
                         .tag($0)
                 }
+            }
+
+            Button("Test") {
+                self.values = Array(0..<10)
             }
 
             WheelPicker(values,
