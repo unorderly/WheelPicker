@@ -95,7 +95,9 @@ class Layout<Center: UIView, Value: Hashable>: UICollectionViewFlowLayout {
 
     var centerSize: Int = 1 {
         didSet {
-            self.invalidateLayout()
+            if centerSize != oldValue {
+                self.invalidateLayout()
+            }
         }
     }
 

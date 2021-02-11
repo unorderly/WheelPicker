@@ -12,6 +12,7 @@
 		B61B006E25C46C980046EFE4 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = B61B006D25C46C980046EFE4 /* Assets.xcassets */; };
 		B61B007125C46C980046EFE4 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = B61B007025C46C980046EFE4 /* Preview Assets.xcassets */; };
 		B61B007D25C46EA90046EFE4 /* WheelPicker in Frameworks */ = {isa = PBXBuildFile; productRef = B61B007C25C46EA90046EFE4 /* WheelPicker */; };
+		B6B1009125D5D46B000EDDBD /* StepSlider in Frameworks */ = {isa = PBXBuildFile; productRef = B6B1009025D5D46B000EDDBD /* StepSlider */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -30,6 +31,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				B61B007D25C46EA90046EFE4 /* WheelPicker in Frameworks */,
+				B6B1009125D5D46B000EDDBD /* StepSlider in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -99,6 +101,7 @@
 			name = Example;
 			packageProductDependencies = (
 				B61B007C25C46EA90046EFE4 /* WheelPicker */,
+				B6B1009025D5D46B000EDDBD /* StepSlider */,
 			);
 			productName = Example;
 			productReference = B61B006625C46C950046EFE4 /* Example.app */;
@@ -127,6 +130,9 @@
 				Base,
 			);
 			mainGroup = B61B005D25C46C950046EFE4;
+			packageReferences = (
+				B6B1008F25D5D46B000EDDBD /* XCRemoteSwiftPackageReference "StepSlider" */,
+			);
 			productRefGroup = B61B006725C46C950046EFE4 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -344,10 +350,26 @@
 		};
 /* End XCConfigurationList section */
 
+/* Begin XCRemoteSwiftPackageReference section */
+		B6B1008F25D5D46B000EDDBD /* XCRemoteSwiftPackageReference "StepSlider" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/leoMehlig/StepSlider";
+			requirement = {
+				branch = main;
+				kind = branch;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
 /* Begin XCSwiftPackageProductDependency section */
 		B61B007C25C46EA90046EFE4 /* WheelPicker */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = WheelPicker;
+		};
+		B6B1009025D5D46B000EDDBD /* StepSlider */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B6B1008F25D5D46B000EDDBD /* XCRemoteSwiftPackageReference "StepSlider" */;
+			productName = StepSlider;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

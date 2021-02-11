@@ -139,7 +139,7 @@ class CollectionPickerView<Cell: UICollectionViewCell, Center: UIView, Value: Ha
     }
 
     private func updateAccessibility() {
-        let value = self.values[self.selectedIndex]
+        let value = self.selectedValue
         self.accessibilityValue = (value as? AccessibleValue)?.accessibilityText ?? (value as? CustomStringConvertible)?.description
     }
 
@@ -209,7 +209,7 @@ class CollectionPickerView<Cell: UICollectionViewCell, Center: UIView, Value: Ha
                     self.scrollToItem(at: index)
                 }
             } else if let index = self.values.lastIndex(where: { $0 < value }),
-                      self.selectedIndex != index, self.overriddenSelected != value {
+                      self.overriddenSelected != value {
                 self.overriddenSelected = value
                 DispatchQueue.main.async {
                     self.scrollToItem(at: index)
