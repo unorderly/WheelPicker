@@ -5,7 +5,8 @@ public protocol AccessibleValue {
     var accessibilityText: String { get }
 }
 
-class CollectionPickerView<Cell: UICollectionViewCell, Center: UIView, Value: Hashable>: UIView, UICollectionViewDelegate, UICollectionViewDelegateFlowLayout, UIScrollViewDelegate {
+
+class CollectionPickerView<Cell: UICollectionViewCell, Center: UIView, Value: Hashable>: UIView, UICollectionViewDelegate, UICollectionViewDelegateFlowLayout, UIScrollViewDelegate where Value: Comparable {
     var values: [Value] = [] {
         didSet {
             if values != oldValue {
@@ -40,15 +41,32 @@ class CollectionPickerView<Cell: UICollectionViewCell, Center: UIView, Value: Ha
 
     private var selectedIndex: Int {
         didSet {
-            if self.values.indices.contains(self.selectedIndex), oldValue != self.selectedIndex {
-                DispatchQueue.main.async {
-                    self.publisher.send(self.values[self.selectedIndex])
+            if oldValue != self.selectedIndex {
+                if let overriden = self.overriddenSelected,
+                   let index = self.values.lastIndex(where: { $0 < overriden }),
+                   index != self.selectedIndex {
+                    self.overriddenSelected = nil
                 }
-                self.layout?.selected = values[self.selectedIndex]
+                DispatchQueue.main.async {
+                    self.publisher.send(self.selectedValue)
+                }
+                self.layout?.selected = self.selectedValue
                 self.updateAccessibility()
             }
         }
     }
+
+    private var selectedValue: Value {
+        if let overriden = self.overriddenSelected {
+            return overriden
+        } else if self.values.indices.contains(self.selectedIndex) {
+            return self.values[self.selectedIndex]
+        } else {
+            return self.values[0]
+        }
+    }
+
+    private var overriddenSelected: Value?
 
     let configureCell: (Cell, Value) -> Void
 
@@ -184,12 +202,20 @@ class CollectionPickerView<Cell: UICollectionViewCell, Center: UIView, Value: Ha
     }
 
     func select(value: Value) {
-        if !self.collectionView.isDragging, !self.collectionView.isDecelerating,
-           let index = self.values.firstIndex(of: value),
-           index != selectedIndex {
-            DispatchQueue.main.async {
-                self.scrollToItem(at: index)
+        if !self.collectionView.isDragging, !self.collectionView.isDecelerating {
+            if let index = self.values.firstIndex(of: value),
+               index != selectedIndex {
+                DispatchQueue.main.async {
+                    self.scrollToItem(at: index)
+                }
+            } else if let index = self.values.lastIndex(where: { $0 < value }) {
+                self.overriddenSelected = value
+                DispatchQueue.main.async {
+                    self.scrollToItem(at: index)
+                }
             }
+        } else {
+
         }
     }
 

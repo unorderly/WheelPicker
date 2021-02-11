@@ -13,21 +13,21 @@ struct ContentView: View {
 
     @State var selected: Int = 50
 
-    @State var values: [Int] = Array(0..<100)
+    @State var values: [Int] = Array(stride(from: 0, through: 100, by: 5))
 
     var body: some View {
         VStack {
-            Text("Steps: \(center)")
+            Text("Steps: \(center) - Selected: \(selected)")
             Stepper("Center", value: $center)
-            Picker("Values", selection: $selected) {
-                ForEach(values, id: \.self) {
-                    Text("\($0)")
-                        .tag($0)
-                }
-            }
+//            Picker("Values", selection: $selected) {
+//                ForEach(values, id: \.self) {
+//                    Text("\($0)")
+//                        .tag($0)
+//                }
+//            }
 
             Button("Test") {
-                self.values = Array(0..<10)
+                self.selected = 12
             }
 
             WheelPicker(values,
