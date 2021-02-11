@@ -208,14 +208,13 @@ class CollectionPickerView<Cell: UICollectionViewCell, Center: UIView, Value: Ha
                 DispatchQueue.main.async {
                     self.scrollToItem(at: index)
                 }
-            } else if let index = self.values.lastIndex(where: { $0 < value }) {
+            } else if let index = self.values.lastIndex(where: { $0 < value }),
+                      self.selectedIndex != index, self.overriddenSelected != value {
                 self.overriddenSelected = value
                 DispatchQueue.main.async {
                     self.scrollToItem(at: index)
                 }
             }
-        } else {
-
         }
     }
 
