@@ -89,7 +89,9 @@ class Layout<Center: UIView, Value: Hashable>: UICollectionViewFlowLayout {
 
     var selected: Value {
         didSet {
-            self.invalidateLayout()
+            if oldValue != selected {
+                self.invalidateLayout()
+            }
         }
     }
 
