@@ -42,15 +42,26 @@ private class CenterView<View: UIView>: UICollectionReusableView {
     }
 }
 
-private class CenterAttributes<View: UIView>: UICollectionViewLayoutAttributes {
+private final class CenterAttributes<View: UIView>: UICollectionViewLayoutAttributes {
     var configure: (View) -> Void = { _ in }
-    var selected: AnyHashable?
+    var selected: Int?
 
+    convenience init(selected: AnyHashable, indexPath: IndexPath) {
+        self.init(forDecorationViewOfKind: "center", with: indexPath)
+        self.selected = selected.hashValue
+    }
     override func isEqual(_ object: Any?) -> Bool {
         guard let other = (object as? CenterAttributes<View>), self.selected == other.selected else {
             return false
         }
         return super.isEqual(object)
+    }
+
+    override func copy(with zone: NSZone? = nil) -> Any {
+        let copy = super.copy(with: zone)
+        (copy as? CenterAttributes<View>)?.selected = selected
+        (copy as? CenterAttributes<View>)?.configure = configure
+        return copy
     }
 }
 
@@ -126,9 +137,8 @@ class Layout<Center: UIView, Value: Hashable>: UICollectionViewFlowLayout {
 
     override func layoutAttributesForDecorationView(ofKind elementKind: String, at indexPath: IndexPath) -> UICollectionViewLayoutAttributes? {
         if elementKind == "center" && indexPath == IndexPath(item: 0, section: 0) {
-            let attributes = CenterAttributes<Center>(forDecorationViewOfKind: elementKind, with: indexPath)
+            let attributes = CenterAttributes<Center>(selected: HashableTuple(selected, centerSize), indexPath: indexPath)
             attributes.configure = { [unowned self] view in self.configureCenter(view, self.selected) }
-            attributes.selected = HashableTuple(selected, centerSize)
             attributes.frame = CGRect(x: 0, y: _mid, width: _visibleRect.width, height: 0)
             attributes.zIndex = 2
             return attributes

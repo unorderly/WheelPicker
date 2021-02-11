@@ -203,10 +203,11 @@ class CollectionPickerView<Cell: UICollectionViewCell, Center: UIView, Value: Ha
 
     func select(value: Value) {
         if !self.collectionView.isDragging, !self.collectionView.isDecelerating {
-            if let index = self.values.firstIndex(of: value),
-               index != selectedIndex {
-                DispatchQueue.main.async {
-                    self.scrollToItem(at: index)
+            if let index = self.values.firstIndex(of: value) {
+                if index != selectedIndex {
+                    DispatchQueue.main.async {
+                        self.scrollToItem(at: index)
+                    }
                 }
             } else if let index = self.values.lastIndex(where: { $0 < value }),
                       self.overriddenSelected != value {
