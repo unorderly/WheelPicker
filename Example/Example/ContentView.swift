@@ -24,10 +24,12 @@ public struct InteractiveButtonStyle: ButtonStyle {
     }
 }
 
-//class Model: Obser
+class Model: ObservableObject {
+    @Published var size: Int = 1
+}
 
 struct ContentView: View {
-    @State var center: Int = 1
+    @StateObject var model = Model()
 
     @State var selected: Int = 50
 
@@ -35,9 +37,9 @@ struct ContentView: View {
 
     var body: some View {
         VStack {
-            Text("Steps: \(center) - Selected: \(selected)")
-            StepSlider(selected: $center, values: [1,5,10,20])
-            Stepper("Center", value: $center)
+            Text("Steps: \(model.size) - Selected: \(selected)")
+            StepSlider(selected: $model.size, values: [1,5,10,20])
+//            Stepper("Center", value: $center)
 //            Picker("Values", selection: $selected) {
 //                ForEach(values, id: \.self) {
 //                    Text("\($0)")
@@ -49,11 +51,11 @@ struct ContentView: View {
                 self.selected = 12
             }
 
-            if center > 1 {
+            if model.size > 1 {
                 GeometryReader { proxy in
             WheelPicker(values,
                         selected: $selected,
-                        centerSize: center,
+                        centerSize: model.size,
                         cell: {
                             Text("\($0)")
                                 .font(.headline)
@@ -61,7 +63,7 @@ struct ContentView: View {
                         },
                         center: { value in
                             Button(action: { }) {
-                                Text("\(value) - \(value + center - 1)")
+                                Text("\(value) - \(value + model.size - 1)")
                                     .font(.headline)
                                     .padding()
                                     .frame(minWidth: 100)
