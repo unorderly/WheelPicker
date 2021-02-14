@@ -31,40 +31,52 @@ private class CenterView<View: UIView>: UICollectionReusableView {
         guard let view = self.view else {
             return
         }
-
+        print("Apply: ", (attributes as? CenterAttributes<View>)?.selected)
         (attributes as? CenterAttributes<View>)?.configure(view)
 
         let size = view.systemLayoutSizeFitting(CGSize(width: attributes.frame.width, height: 0))
-        self.frame = CGRect(x: attributes.frame.midX - size.width / 2,
+        self.frame = CGRect(x: attributes.frame.minX,
                             y: attributes.frame.midY - size.height / 2,
-                            width: size.width,
+                            width: attributes.frame.width,
                             height: size.height)
     }
 }
 
-private class CenterAttributes<View: UIView>: UICollectionViewLayoutAttributes {
+private final class CenterAttributes<View: UIView>: UICollectionViewLayoutAttributes {
     var configure: (View) -> Void = { _ in }
     var selected: AnyHashable?
 
+    convenience init(selected: AnyHashable, indexPath: IndexPath) {
+        self.init(forDecorationViewOfKind: "center", with: indexPath)
+        self.selected = selected
+    }
     override func isEqual(_ object: Any?) -> Bool {
         guard let other = (object as? CenterAttributes<View>), self.selected == other.selected else {
             return false
         }
         return super.isEqual(object)
     }
+
+    override func copy(with zone: NSZone? = nil) -> Any {
+        let copy = super.copy(with: zone)
+        (copy as? CenterAttributes<View>)?.selected = selected
+        (copy as? CenterAttributes<View>)?.configure = configure
+        return copy
+    }
 }
 
-struct HashableTuple<A: Hashable, B: Hashable>: Hashable {
-    let a: A
-    let b: B
+struct HashableTuple: Hashable {
+    let a: AnyHashable
+    let b: AnyHashable
 
-    init(_ a: A, _ b: B) {
+    init(_ a: AnyHashable, _ b: AnyHashable) {
         self.a = a
         self.b = b
     }
 
-    var any: AnyHashable {
-        AnyHashable(self)
+    init(_ a: AnyHashable, _ b: AnyHashable, _ c: AnyHashable) {
+        self.a = a
+        self.b = HashableTuple(b, c)
     }
 }
 
@@ -103,7 +115,7 @@ class Layout<Center: UIView, Value: Hashable>: UICollectionViewFlowLayout {
         }
     }
 
-    let configureCenter: (Center, Value) -> Void
+    var configureCenter: (Center, Value) -> Void
 
     init(selected: Value,
          configureCenter: @escaping (Center, Value) -> Void) {
@@ -126,9 +138,8 @@ class Layout<Center: UIView, Value: Hashable>: UICollectionViewFlowLayout {
 
     override func layoutAttributesForDecorationView(ofKind elementKind: String, at indexPath: IndexPath) -> UICollectionViewLayoutAttributes? {
         if elementKind == "center" && indexPath == IndexPath(item: 0, section: 0) {
-            let attributes = CenterAttributes<Center>(forDecorationViewOfKind: elementKind, with: indexPath)
+            let attributes = CenterAttributes<Center>(selected: HashableTuple(selected, centerSize, _visibleRect.width), indexPath: indexPath)
             attributes.configure = { [unowned self] view in self.configureCenter(view, self.selected) }
-            attributes.selected = HashableTuple(selected, centerSize)
             attributes.frame = CGRect(x: 0, y: _mid, width: _visibleRect.width, height: 0)
             attributes.zIndex = 2
             return attributes

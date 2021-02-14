@@ -7,29 +7,9 @@
 
 import SwiftUI
 import WheelPicker
-import StepSlider
-
-public struct InteractiveButtonStyle: ButtonStyle {
-    @Environment(\.accessibilityReduceMotion) var accessibilityReduceMotion
-
-    public func makeBody(configuration: Configuration) -> some View {
-        configuration.label
-//            .shadow(configuration.isPressed && !self.accessibilityReduceMotion
-//                ? .none
-//                : self.shadow)
-            .scaleEffect(configuration.isPressed && !self.accessibilityReduceMotion
-                ? 0.95
-                : 1)
-            .animation(.interactiveSpring(), value: configuration.isPressed && !self.accessibilityReduceMotion)
-    }
-}
-
-class Model: ObservableObject {
-    @Published var size: Int = 1
-}
 
 struct ContentView: View {
-    @StateObject var model = Model()
+    @State var center = 2
 
     @State var selected: Int = 50
 
@@ -37,51 +17,48 @@ struct ContentView: View {
 
     var body: some View {
         VStack {
-            Text("Steps: \(model.size) - Selected: \(selected)")
-            StepSlider(selected: $model.size, values: [1,5,10,20])
-//            Stepper("Center", value: $center)
-//            Picker("Values", selection: $selected) {
-//                ForEach(values, id: \.self) {
-//                    Text("\($0)")
-//                        .tag($0)
-//                }
-//            }
+            Text("Steps: \(center) - Selected: \(selected)")
+
+            Stepper("Center", value: $center)
+            Picker("Values", selection: $selected) {
+                ForEach(values, id: \.self) {
+                    Text("\($0)")
+                        .tag($0)
+                }
+            }
 
             Button("Test") {
                 self.selected = 12
             }
 
-            if model.size > 1 {
-                GeometryReader { proxy in
-            WheelPicker(values,
-                        selected: $selected,
-                        centerSize: model.size,
-                        cell: {
-                            Text("\($0)")
-                                .font(.headline)
-                                .padding()
-                        },
-                        center: { value in
-                            Button(action: { }) {
-                                Text("\(value) - \(value + model.size - 1)")
+            GeometryReader { proxy in
+                WheelPicker(values,
+                            selected: $selected,
+                            centerSize: center,
+                            cell: {
+                                Text("\($0)")
                                     .font(.headline)
                                     .padding()
-                                    .frame(minWidth: 100)
-                                    .background(Color.red)
-                                    .cornerRadius(10)
-                                    .shadow(color: Color.black.opacity(0.12), radius: 4)
-                            }
-                            .buttonStyle(InteractiveButtonStyle())
-                        })
-                .accessibility(label: Text("Time Picker"))
-                .accessibility(hint: Text(hint))
-                .frame(width: proxy.size.width)
+                            },
+                            center: { value in
+                                Button(action: { }) {
+                                    Text("\(value) - \(value + center - 1)")
+                                        .font(.headline)
+                                        .padding()
+                                        .frame(minWidth: 100)
+                                        .background(Color.red)
+                                        .cornerRadius(10)
+                                        .shadow(color: Color.black.opacity(0.12), radius: 4)
+                                }
+                            })
+                    .accessibility(label: Text("Time Picker"))
+                    .accessibility(hint: Text(hint))
+                    .frame(width: proxy.size.width)
             }
-                .frame(height: 200)
-                .transition(AnyTransition.opacity.animation(Animation.default)
-                                .combined(with: .move(edge: .bottom)))
-                .animation(.spring())
-            }
+            .frame(height: 200)
+            .transition(AnyTransition.opacity.animation(Animation.default)
+                            .combined(with: .move(edge: .bottom)))
+            .animation(.spring())
         }
         .animation(.spring())
     }
