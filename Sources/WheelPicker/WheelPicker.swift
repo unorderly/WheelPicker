@@ -55,6 +55,8 @@ struct PickerWrapper<Cell: View, Center: View, Value: Hashable>: UIViewRepresent
     }
 
     func updateUIView(_ picker: UIViewType, context: Context) {
+        picker.configureCell = { $0.set(value: self.cell($1)) }
+        picker.configureCenter = { $0.set(value: self.center($1)) }
         picker.values = values
         picker.select(value: selected)
         picker.centerSize = centerSize

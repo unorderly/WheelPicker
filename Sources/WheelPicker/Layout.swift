@@ -31,7 +31,7 @@ private class CenterView<View: UIView>: UICollectionReusableView {
         guard let view = self.view else {
             return
         }
-        print("apply ", attributes.frame.width)
+        print("Apply: ", (attributes as? CenterAttributes<View>)?.selected)
         (attributes as? CenterAttributes<View>)?.configure(view)
 
         let size = view.systemLayoutSizeFitting(CGSize(width: attributes.frame.width, height: 0))
@@ -115,7 +115,7 @@ class Layout<Center: UIView, Value: Hashable>: UICollectionViewFlowLayout {
         }
     }
 
-    let configureCenter: (Center, Value) -> Void
+    var configureCenter: (Center, Value) -> Void
 
     init(selected: Value,
          configureCenter: @escaping (Center, Value) -> Void) {
@@ -138,7 +138,6 @@ class Layout<Center: UIView, Value: Hashable>: UICollectionViewFlowLayout {
 
     override func layoutAttributesForDecorationView(ofKind elementKind: String, at indexPath: IndexPath) -> UICollectionViewLayoutAttributes? {
         if elementKind == "center" && indexPath == IndexPath(item: 0, section: 0) {
-            print("attr ", _visibleRect.width)
             let attributes = CenterAttributes<Center>(selected: HashableTuple(selected, centerSize, _visibleRect.width), indexPath: indexPath)
             attributes.configure = { [unowned self] view in self.configureCenter(view, self.selected) }
             attributes.frame = CGRect(x: 0, y: _mid, width: _visibleRect.width, height: 0)

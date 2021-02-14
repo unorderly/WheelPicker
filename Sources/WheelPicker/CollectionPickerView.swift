@@ -68,11 +68,16 @@ class CollectionPickerView<Cell: UICollectionViewCell, Center: UIView, Value: Ha
 
     private var overriddenSelected: Value?
 
-    let configureCell: (Cell, Value) -> Void
+    var configureCell: (Cell, Value) -> Void
+
+    var configureCenter: (Center, Value) -> Void {
+        get { self.layout?.configureCenter ?? { _, _ in } }
+        set { self.layout?.configureCenter = newValue }
+    }
 
     var centerSize: Int  {
         get { self.layout?.centerSize ?? 1}
-        set{ self.layout?.centerSize = newValue }
+        set { self.layout?.centerSize = newValue }
     }
   
 
@@ -205,16 +210,12 @@ class CollectionPickerView<Cell: UICollectionViewCell, Center: UIView, Value: Ha
         if !self.collectionView.isDragging, !self.collectionView.isDecelerating {
             if let index = self.values.firstIndex(of: value) {
                 if index != selectedIndex {
-                    DispatchQueue.main.async {
-                        self.scrollToItem(at: index)
-                    }
+                    self.scrollToItem(at: index)
                 }
             } else if let index = self.values.lastIndex(where: { $0 < value }),
                       self.overriddenSelected != value {
                 self.overriddenSelected = value
-                DispatchQueue.main.async {
-                    self.scrollToItem(at: index)
-                }
+                self.scrollToItem(at: index)
             }
         }
     }
