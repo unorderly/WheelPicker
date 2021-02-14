@@ -31,7 +31,7 @@ private class CenterView<View: UIView>: UICollectionReusableView {
         guard let view = self.view else {
             return
         }
-        print("Apply: ", (attributes as? CenterAttributes<View>)?.selected)
+
         (attributes as? CenterAttributes<View>)?.configure(view)
 
         let size = view.systemLayoutSizeFitting(CGSize(width: attributes.frame.width, height: 0))

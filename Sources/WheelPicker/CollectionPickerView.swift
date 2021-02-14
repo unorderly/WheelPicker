@@ -5,6 +5,10 @@ public protocol AccessibleValue {
     var accessibilityText: String { get }
 }
 
+public protocol SizeIdentifiable {
+    var sizeIdentifier: AnyHashable { get }
+}
+
 
 class CollectionPickerView<Cell: UICollectionViewCell, Center: UIView, Value: Hashable>: UIView, UICollectionViewDelegate, UICollectionViewDelegateFlowLayout, UIScrollViewDelegate where Value: Comparable {
     var values: [Value] = [] {
@@ -305,14 +309,15 @@ class CollectionPickerView<Cell: UICollectionViewCell, Center: UIView, Value: Ha
         guard let value = self.diffDataSource.itemIdentifier(for: indexPath) else {
             return .zero
         }
-        if let cached = sizeCache[value] {
+        let cacheId: AnyHashable = (value as? SizeIdentifiable)?.sizeIdentifier ?? AnyHashable(value)
+        if let cached = sizeCache[cacheId] {
             return cached
         } else {
             self.configureCell(sizingCell, value)
             let size = self.sizingCell.systemLayoutSizeFitting(CGSize(width: collectionView.bounds.width, height: 0))
 
             let new = CGSize(width: collectionView.bounds.width, height: size.height)
-            sizeCache[value] = new
+            sizeCache[cacheId] = new
             return new
         }
     }

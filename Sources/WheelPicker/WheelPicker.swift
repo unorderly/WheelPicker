@@ -97,44 +97,56 @@ class PickerModel<Value: Hashable> {
 }
 
 final class UIHostingView<Content: View>: UIView {
-    func set(value content: Content) {
-        self.subviews.forEach {
-            $0.removeFromSuperview()
-        }
-        let hostingController = UIHostingController(rootView: content)
-        backgroundColor = .clear
-        hostingController.view.translatesAutoresizingMaskIntoConstraints = false
-        hostingController.view.backgroundColor = .clear
-        self.addSubview(hostingController.view)
 
-        let constraints = [
-            hostingController.view.topAnchor.constraint(equalTo: self.topAnchor, constant: 0),
-            hostingController.view.leftAnchor.constraint(equalTo: self.leftAnchor, constant: 0),
-            hostingController.view.bottomAnchor.constraint(equalTo: self.bottomAnchor, constant: 0),
-            hostingController.view.rightAnchor.constraint(equalTo: self.rightAnchor, constant: 0),
-        ]
-        NSLayoutConstraint.activate(constraints)
+    private var hosting: UIHostingController<Content>?
+
+    func set(value content: Content) {
+        if let hosting = self.hosting {
+            hosting.rootView = content
+        } else {
+            let hosting = UIHostingController(rootView: content)
+            backgroundColor = .clear
+            hosting.view.translatesAutoresizingMaskIntoConstraints = false
+            hosting.view.backgroundColor = .clear
+            self.addSubview(hosting.view)
+
+            NSLayoutConstraint.activate([
+                hosting.view.topAnchor.constraint(equalTo: self.topAnchor, constant: 0),
+                hosting.view.leftAnchor.constraint(equalTo: self.leftAnchor, constant: 0),
+                hosting.view.bottomAnchor.constraint(equalTo: self.bottomAnchor, constant: 0),
+                hosting.view.rightAnchor.constraint(equalTo: self.rightAnchor, constant: 0),
+            ])
+            self.hosting = hosting
+        }
     }
 }
 
 final class UIHostingCell<Content: View>: UICollectionViewCell {
-    func set(value content: Content) {
-        contentView.subviews.forEach {
-            $0.removeFromSuperview()
-        }
-        let hostingController = UIHostingController(rootView: content)
-        backgroundColor = .clear
-        hostingController.view.translatesAutoresizingMaskIntoConstraints = false
-        hostingController.view.backgroundColor = .clear
-        contentView.addSubview(hostingController.view)
+    private var hosting: UIHostingController<Content>?
 
-        let constraints = [
-            hostingController.view.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 0),
-            hostingController.view.leftAnchor.constraint(equalTo: contentView.leftAnchor, constant: 0),
-            hostingController.view.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: 0),
-            hostingController.view.rightAnchor.constraint(equalTo: contentView.rightAnchor, constant: 0),
-        ]
-        NSLayoutConstraint.activate(constraints)
+    func set(value content: Content) {
+        if let hosting = self.hosting {
+            hosting.rootView = content
+        } else {
+            let hosting = UIHostingController(rootView: content)
+
+            backgroundColor = .clear
+            hosting.view.translatesAutoresizingMaskIntoConstraints = false
+            hosting.view.backgroundColor = .clear
+            self.contentView.addSubview(hosting.view)
+
+            NSLayoutConstraint.activate([
+                hosting.view.topAnchor
+                    .constraint(equalTo: self.contentView.topAnchor, constant: 0),
+                hosting.view.leftAnchor
+                    .constraint(equalTo: self.contentView.leftAnchor, constant: 0),
+                hosting.view.bottomAnchor
+                    .constraint(equalTo: self.contentView.bottomAnchor, constant: 0),
+                hosting.view.rightAnchor
+                    .constraint(equalTo: self.contentView.rightAnchor, constant: 0),
+            ])
+            self.hosting = hosting
+        }
     }
 }
 
