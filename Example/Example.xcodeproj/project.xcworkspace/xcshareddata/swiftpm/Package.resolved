@@ -1,0 +1,16 @@
+{
+  "object": {
+    "pins": [
+      {
+        "package": "StepSlider",
+        "repositoryURL": "https://github.com/leoMehlig/StepSlider",
+        "state": {
+          "branch": "main",
+          "revision": "68f049a58414034dd2e51bad269f1eb5cc4c8651",
+          "version": null
+        }
+      }
+    ]
+  },
+  "version": 1
+}
