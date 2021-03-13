@@ -1,10 +1,3 @@
-//
-//  ContentView.swift
-//  Example
-//
-//  Created by Leonard Mehlig on 29.01.21.
-//
-
 import SwiftUI
 import WheelPicker
 
@@ -41,7 +34,7 @@ struct ContentView: View {
                                     .padding()
                             },
                             center: { value in
-                                Button(action: { }) {
+                                Button(action: {}) {
                                     Text("\(value) - \(value + center - 1)")
                                         .font(.headline)
                                         .padding()
@@ -57,7 +50,7 @@ struct ContentView: View {
             }
             .frame(height: 200)
             .transition(AnyTransition.opacity.animation(Animation.default)
-                            .combined(with: .move(edge: .bottom)))
+                .combined(with: .move(edge: .bottom)))
             .animation(.spring())
         }
         .animation(.spring())
@@ -69,10 +62,10 @@ struct ContentView: View {
         }
         var hint = ""
         if index > self.values.startIndex {
-            hint += "Up: \(self.values[index-1])"
+            hint += "Up: \(self.values[index - 1])"
         }
         if index < self.values.endIndex - 1 {
-            hint += "Down: \(self.values[index+1])"
+            hint += "Down: \(self.values[index + 1])"
         }
         return hint
     }

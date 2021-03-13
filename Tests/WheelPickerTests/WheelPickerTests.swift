@@ -1,6 +1,4 @@
-import XCTest
 @testable import WheelPicker
+import XCTest
 
-final class WheelPickerTests: XCTestCase {
-
-}
+final class WheelPickerTests: XCTestCase {}

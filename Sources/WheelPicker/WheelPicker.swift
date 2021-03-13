@@ -1,5 +1,5 @@
-import SwiftUI
 import Combine
+import SwiftUI
 
 public struct WheelPicker<Cell: View, Center: View, Value: Hashable>: View where Value: Comparable {
     let values: [Value]
@@ -12,10 +12,10 @@ public struct WheelPicker<Cell: View, Center: View, Value: Hashable>: View where
     let center: (Value) -> Center
 
     public init(_ values: [Value],
-         selected: Binding<Value>,
-         centerSize: Int = 1,
-         cell: @escaping (Value) -> Cell,
-         center: @escaping (Value) -> Center) {
+                selected: Binding<Value>,
+                centerSize: Int = 1,
+                cell: @escaping (Value) -> Cell,
+                center: @escaping (Value) -> Center) {
         self.values = values
         self._selected = selected
         self.cell = cell
@@ -29,8 +29,6 @@ public struct WheelPicker<Cell: View, Center: View, Value: Hashable>: View where
 }
 
 struct PickerWrapper<Cell: View, Center: View, Value: Hashable>: UIViewRepresentable where Value: Comparable {
-
-
     let values: [Value]
 
     @Binding var selected: Value
@@ -57,24 +55,23 @@ struct PickerWrapper<Cell: View, Center: View, Value: Hashable>: UIViewRepresent
     func updateUIView(_ picker: UIViewType, context: Context) {
         picker.configureCell = { $0.set(value: self.cell($1)) }
         picker.configureCenter = { $0.set(value: self.center($1)) }
-        picker.values = values
-        picker.select(value: selected)
-        picker.centerSize = centerSize
+        picker.values = self.values
+        picker.select(value: self.selected)
+        picker.centerSize = self.centerSize
     }
-
 
     func makeUIView(context: Context) -> UIViewType {
         let picker = UIViewType(values: self.values,
-                              selected: self.selected,
-                              configureCell: { $0.set(value: self.cell($1)) },
-                              configureCenter: { $0.set(value: self.center($1)) })
-        picker.centerSize = centerSize
+                                selected: self.selected,
+                                configureCell: { $0.set(value: self.cell($1)) },
+                                configureCenter: { $0.set(value: self.center($1)) })
+        picker.centerSize = self.centerSize
         context.coordinator.listing(to: picker.publisher)
         return picker
     }
 
     func makeCoordinator() -> PickerModel<Value> {
-        return PickerModel(selected: $selected)
+        PickerModel(selected: $selected)
     }
 }
 
@@ -97,7 +94,6 @@ class PickerModel<Value: Hashable> {
 }
 
 final class UIHostingView<Content: View>: UIView {
-
     private var hosting: UIHostingController<Content>?
 
     func set(value content: Content) {
@@ -114,7 +110,7 @@ final class UIHostingView<Content: View>: UIView {
                 hosting.view.topAnchor.constraint(equalTo: self.topAnchor, constant: 0),
                 hosting.view.leftAnchor.constraint(equalTo: self.leftAnchor, constant: 0),
                 hosting.view.bottomAnchor.constraint(equalTo: self.bottomAnchor, constant: 0),
-                hosting.view.rightAnchor.constraint(equalTo: self.rightAnchor, constant: 0),
+                hosting.view.rightAnchor.constraint(equalTo: self.rightAnchor, constant: 0)
             ])
             self.hosting = hosting
         }
@@ -143,7 +139,7 @@ final class UIHostingCell<Content: View>: UICollectionViewCell {
                 hosting.view.bottomAnchor
                     .constraint(equalTo: self.contentView.bottomAnchor, constant: 0),
                 hosting.view.rightAnchor
-                    .constraint(equalTo: self.contentView.rightAnchor, constant: 0),
+                    .constraint(equalTo: self.contentView.rightAnchor, constant: 0)
             ])
             self.hosting = hosting
         }
@@ -151,15 +147,14 @@ final class UIHostingCell<Content: View>: UICollectionViewCell {
 }
 
 struct WheelPicker_Previews: PreviewProvider {
-
     struct Preview: View {
         @State var center: Int = 1
 
         @State var selected: Int = 0
 
-        @State var values: [Int] = Array(0..<100)
+        @State var values: [Int] = Array(0 ..< 100)
 
-        public init() { }
+        public init() {}
 
         public var body: some View {
             VStack {
@@ -200,16 +195,16 @@ struct WheelPicker_Previews: PreviewProvider {
             }
             var hint = ""
             if index > self.values.startIndex {
-                hint += "Up: \(self.values[index-1])"
+                hint += "Up: \(self.values[index - 1])"
             }
             if index < self.values.endIndex - 1 {
-                hint += "Down: \(self.values[index+1])"
+                hint += "Down: \(self.values[index + 1])"
             }
             return hint
         }
     }
+
     public static var previews: some View {
         Preview()
     }
 }
-

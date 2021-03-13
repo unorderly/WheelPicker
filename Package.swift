@@ -3,22 +3,17 @@
 
 import PackageDescription
 
-let package = Package(
-    name: "WheelPicker",
-    platforms: [
-        .iOS(.v14)
-    ],
-    products: [
-        .library(
-            name: "WheelPicker",
-            targets: ["WheelPicker"]),
-    ],
-    targets: [
-        .target(
-            name: "WheelPicker",
-            dependencies: []),
-        .testTarget(
-            name: "WheelPickerTests",
-            dependencies: ["WheelPicker"]),
-    ]
-)
+let package = Package(name: "WheelPicker",
+                      platforms: [
+                          .iOS(.v14)
+                      ],
+                      products: [
+                          .library(name: "WheelPicker",
+                                   targets: ["WheelPicker"])
+                      ],
+                      targets: [
+                          .target(name: "WheelPicker",
+                                  dependencies: []),
+                          .testTarget(name: "WheelPickerTests",
+                                      dependencies: ["WheelPicker"])
+                      ])
