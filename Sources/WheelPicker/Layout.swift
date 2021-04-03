@@ -194,7 +194,7 @@ class Layout<Center: UIView, Value: Hashable>: UICollectionViewFlowLayout {
             }
 
             if self.collectionView!.numberOfItems(inSection: 0) > 0,
-                let deco = self.layoutAttributesForDecorationView(ofKind: "center", at: IndexPath(row: 0, section: 0)) {
+               let deco = self.layoutAttributesForDecorationView(ofKind: "center", at: IndexPath(row: 0, section: 0)) {
                 attributes.append(deco)
             }
         }

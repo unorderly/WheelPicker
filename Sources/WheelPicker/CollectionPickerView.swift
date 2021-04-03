@@ -48,8 +48,8 @@ UICollectionViewDelegate, UICollectionViewDelegateFlowLayout, UIScrollViewDelega
         didSet {
             if oldValue != self.selectedIndex {
                 if let overriden = self.overriddenSelected,
-                    let index = self.values.lastIndex(where: { $0 < overriden }),
-                    index != self.selectedIndex {
+                   let index = self.values.lastIndex(where: { $0 < overriden }),
+                   index != self.selectedIndex {
                     self.overriddenSelected = nil
                 }
                 DispatchQueue.main.async {
@@ -218,7 +218,7 @@ UICollectionViewDelegate, UICollectionViewDelegateFlowLayout, UIScrollViewDelega
                     self.scrollToItem(at: index)
                 }
             } else if let index = self.values.lastIndex(where: { $0 < value }),
-                self.overriddenSelected != value {
+                      self.overriddenSelected != value {
                 self.overriddenSelected = value
                 self.scrollToItem(at: index)
             }
