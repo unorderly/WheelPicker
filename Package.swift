@@ -13,7 +13,5 @@ let package = Package(name: "WheelPicker",
                       ],
                       targets: [
                           .target(name: "WheelPicker",
-                                  dependencies: []),
-                          .testTarget(name: "WheelPickerTests",
-                                      dependencies: ["WheelPicker"])
+                                  dependencies: [])
                       ])
