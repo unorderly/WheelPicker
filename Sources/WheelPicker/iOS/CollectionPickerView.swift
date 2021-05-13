@@ -1,13 +1,6 @@
+#if canImport(UIKit)
 import Combine
 import UIKit
-
-public protocol AccessibleValue {
-    var accessibilityText: String { get }
-}
-
-public protocol SizeIdentifiable {
-    var sizeIdentifier: AnyHashable { get }
-}
 
 class CollectionPickerView<Cell: UICollectionViewCell, Center: UIView, Value: Hashable>: UIView,
 UICollectionViewDelegate, UICollectionViewDelegateFlowLayout, UIScrollViewDelegate where Value: Comparable {
@@ -331,3 +324,4 @@ UICollectionViewDelegate, UICollectionViewDelegateFlowLayout, UIScrollViewDelega
         0
     }
 }
+#endif

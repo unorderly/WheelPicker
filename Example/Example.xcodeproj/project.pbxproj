@@ -12,6 +12,11 @@
 		B61B006E25C46C980046EFE4 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = B61B006D25C46C980046EFE4 /* Assets.xcassets */; };
 		B61B007125C46C980046EFE4 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = B61B007025C46C980046EFE4 /* Preview Assets.xcassets */; };
 		B61B007D25C46EA90046EFE4 /* WheelPicker in Frameworks */ = {isa = PBXBuildFile; productRef = B61B007C25C46EA90046EFE4 /* WheelPicker */; };
+		B6CC7D27264A94AB002EC100 /* ExampleApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6CC7D26264A94AB002EC100 /* ExampleApp.swift */; };
+		B6CC7D29264A94AB002EC100 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6CC7D28264A94AB002EC100 /* ContentView.swift */; };
+		B6CC7D2B264A94AD002EC100 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = B6CC7D2A264A94AD002EC100 /* Assets.xcassets */; };
+		B6CC7D2E264A94AD002EC100 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = B6CC7D2D264A94AD002EC100 /* Preview Assets.xcassets */; };
+		B6CC7D35264A94E6002EC100 /* WheelPicker in Frameworks */ = {isa = PBXBuildFile; productRef = B6CC7D34264A94E6002EC100 /* WheelPicker */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -22,6 +27,13 @@
 		B61B007025C46C980046EFE4 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		B61B007225C46C980046EFE4 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		B61B007925C46C9F0046EFE4 /* WheelPicker */ = {isa = PBXFileReference; lastKnownFileType = folder; name = WheelPicker; path = ..; sourceTree = "<group>"; };
+		B6CC7D24264A94AB002EC100 /* Example (macOS).app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Example (macOS).app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		B6CC7D26264A94AB002EC100 /* ExampleApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExampleApp.swift; sourceTree = "<group>"; };
+		B6CC7D28264A94AB002EC100 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+		B6CC7D2A264A94AD002EC100 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		B6CC7D2D264A94AD002EC100 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
+		B6CC7D2F264A94AD002EC100 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		B6CC7D30264A94AD002EC100 /* Example__macOS_.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Example__macOS_.entitlements; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -33,6 +45,14 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		B6CC7D21264A94AB002EC100 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B6CC7D35264A94E6002EC100 /* WheelPicker in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
@@ -40,6 +60,7 @@
 			isa = PBXGroup;
 			children = (
 				B61B006825C46C950046EFE4 /* Example */,
+				B6CC7D25264A94AB002EC100 /* Example (macOS) */,
 				B61B007925C46C9F0046EFE4 /* WheelPicker */,
 				B61B006725C46C950046EFE4 /* Products */,
 				B61B007B25C46EA90046EFE4 /* Frameworks */,
@@ -50,6 +71,7 @@
 			isa = PBXGroup;
 			children = (
 				B61B006625C46C950046EFE4 /* Example.app */,
+				B6CC7D24264A94AB002EC100 /* Example (macOS).app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -81,6 +103,27 @@
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
+		B6CC7D25264A94AB002EC100 /* Example (macOS) */ = {
+			isa = PBXGroup;
+			children = (
+				B6CC7D26264A94AB002EC100 /* ExampleApp.swift */,
+				B6CC7D28264A94AB002EC100 /* ContentView.swift */,
+				B6CC7D2A264A94AD002EC100 /* Assets.xcassets */,
+				B6CC7D2F264A94AD002EC100 /* Info.plist */,
+				B6CC7D30264A94AD002EC100 /* Example__macOS_.entitlements */,
+				B6CC7D2C264A94AD002EC100 /* Preview Content */,
+			);
+			path = "Example (macOS)";
+			sourceTree = "<group>";
+		};
+		B6CC7D2C264A94AD002EC100 /* Preview Content */ = {
+			isa = PBXGroup;
+			children = (
+				B6CC7D2D264A94AD002EC100 /* Preview Assets.xcassets */,
+			);
+			path = "Preview Content";
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -104,17 +147,40 @@
 			productReference = B61B006625C46C950046EFE4 /* Example.app */;
 			productType = "com.apple.product-type.application";
 		};
+		B6CC7D23264A94AB002EC100 /* Example (macOS) */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = B6CC7D33264A94AD002EC100 /* Build configuration list for PBXNativeTarget "Example (macOS)" */;
+			buildPhases = (
+				B6CC7D20264A94AB002EC100 /* Sources */,
+				B6CC7D21264A94AB002EC100 /* Frameworks */,
+				B6CC7D22264A94AB002EC100 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "Example (macOS)";
+			packageProductDependencies = (
+				B6CC7D34264A94E6002EC100 /* WheelPicker */,
+			);
+			productName = "Example (macOS)";
+			productReference = B6CC7D24264A94AB002EC100 /* Example (macOS).app */;
+			productType = "com.apple.product-type.application";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
 		B61B005E25C46C950046EFE4 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastSwiftUpdateCheck = 1240;
+				LastSwiftUpdateCheck = 1250;
 				LastUpgradeCheck = 1240;
 				TargetAttributes = {
 					B61B006525C46C950046EFE4 = {
 						CreatedOnToolsVersion = 12.4;
+					};
+					B6CC7D23264A94AB002EC100 = {
+						CreatedOnToolsVersion = 12.5;
 					};
 				};
 			};
@@ -134,6 +200,7 @@
 			projectRoot = "";
 			targets = (
 				B61B006525C46C950046EFE4 /* Example */,
+				B6CC7D23264A94AB002EC100 /* Example (macOS) */,
 			);
 		};
 /* End PBXProject section */
@@ -148,6 +215,15 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		B6CC7D22264A94AB002EC100 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B6CC7D2E264A94AD002EC100 /* Preview Assets.xcassets in Resources */,
+				B6CC7D2B264A94AD002EC100 /* Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
@@ -157,6 +233,15 @@
 			files = (
 				B61B006C25C46C950046EFE4 /* ContentView.swift in Sources */,
 				B61B006A25C46C950046EFE4 /* ExampleApp.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B6CC7D20264A94AB002EC100 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B6CC7D29264A94AB002EC100 /* ContentView.swift in Sources */,
+				B6CC7D27264A94AB002EC100 /* ExampleApp.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -323,6 +408,56 @@
 			};
 			name = Release;
 		};
+		B6CC7D31264A94AD002EC100 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = "Example (macOS)/Example__macOS_.entitlements";
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				DEVELOPMENT_ASSET_PATHS = "\"Example (macOS)/Preview Content\"";
+				DEVELOPMENT_TEAM = P459Y32P65;
+				ENABLE_HARDENED_RUNTIME = YES;
+				ENABLE_PREVIEWS = YES;
+				INFOPLIST_FILE = "Example (macOS)/Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 11.2;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.leomehlig.Example--macOS-";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+		B6CC7D32264A94AD002EC100 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = "Example (macOS)/Example__macOS_.entitlements";
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				DEVELOPMENT_ASSET_PATHS = "\"Example (macOS)/Preview Content\"";
+				DEVELOPMENT_TEAM = P459Y32P65;
+				ENABLE_HARDENED_RUNTIME = YES;
+				ENABLE_PREVIEWS = YES;
+				INFOPLIST_FILE = "Example (macOS)/Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 11.2;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.leomehlig.Example--macOS-";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -344,10 +479,23 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
+		B6CC7D33264A94AD002EC100 /* Build configuration list for PBXNativeTarget "Example (macOS)" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				B6CC7D31264A94AD002EC100 /* Debug */,
+				B6CC7D32264A94AD002EC100 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 /* End XCConfigurationList section */
 
 /* Begin XCSwiftPackageProductDependency section */
 		B61B007C25C46EA90046EFE4 /* WheelPicker */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = WheelPicker;
+		};
+		B6CC7D34264A94E6002EC100 /* WheelPicker */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = WheelPicker;
 		};

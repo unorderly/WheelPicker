@@ -1,49 +1,69 @@
-import UIKit
+#if canImport(AppKit)
+import AppKit
 
-private class CenterView<View: UIView>: UICollectionReusableView {
+extension NSCollectionView {
+    var contentOffset: CGPoint {
+      get { return enclosingScrollView?.documentVisibleRect.origin ?? .zero }
+      set { scroll(newValue) }
+    }
+
+    var contentSize: CGSize {
+      get { return enclosingScrollView?.documentVisibleRect.size ?? .zero }
+    }
+}
+
+private class CenterView<View: NSView>: NSView, NSCollectionViewElement {
     weak var view: View?
 
-    override init(frame: CGRect) {
-        super.init(frame: frame)
-        backgroundColor = .clear
+
+    override init(frame frameRect: NSRect) {
+        super.init(frame: .zero)
+        layer?.backgroundColor = NSColor.clear.cgColor
         let view = View()
 
-        view.translatesAutoresizingMaskIntoConstraints = false
-
+//        view.translatesAutoresizingMaskIntoConstraints = false
+//        self.translatesAutoresizingMaskIntoConstraints = false
         self.addSubview(view)
 
-        let constraints = [
-            view.topAnchor.constraint(equalTo: self.topAnchor, constant: 0),
-            view.leftAnchor.constraint(equalTo: self.leftAnchor, constant: 0),
-            view.bottomAnchor.constraint(equalTo: self.bottomAnchor, constant: 0),
-            view.rightAnchor.constraint(equalTo: self.rightAnchor, constant: 0)
-        ]
-        NSLayoutConstraint.activate(constraints)
+//        let constraints = [
+//            view.topAnchor.constraint(equalTo: self.topAnchor, constant: 0),
+//            view.leftAnchor.constraint(equalTo: self.leftAnchor, constant: 0),
+//            view.bottomAnchor.constraint(equalTo: self.bottomAnchor, constant: 0),
+//            view.rightAnchor.constraint(equalTo: self.rightAnchor, constant: 0)
+//        ]
+//        NSLayoutConstraint.activate(constraints)
 
         self.view = view
     }
 
+    override func layout() {
+        super.layout()
+        view?.frame = self.bounds
+    }
+
     @available(*, unavailable)
-    required init?(coder aDecoder: NSCoder) {
+    required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
 
-    override func apply(_ attributes: UICollectionViewLayoutAttributes) {
+
+    func apply(_ attributes: NSCollectionViewLayoutAttributes) {
         guard let view = self.view else {
             return
         }
 
         (attributes as? CenterAttributes<View>)?.configure(view)
-
-        let size = view.systemLayoutSizeFitting(CGSize(width: attributes.frame.width, height: 0))
-        self.frame = CGRect(x: attributes.frame.minX,
+        view.translatesAutoresizingMaskIntoConstraints = false
+        let size = view.fittingSize
+        view.translatesAutoresizingMaskIntoConstraints = true
+        self.frame = NSRect(x: attributes.frame.minX,
                             y: attributes.frame.midY - size.height / 2,
                             width: attributes.frame.width,
                             height: size.height)
     }
 }
 
-private final class CenterAttributes<View: UIView>: UICollectionViewLayoutAttributes {
+private final class CenterAttributes<View: NSView>: NSCollectionViewLayoutAttributes {
     var configure: (View) -> Void = { _ in }
     var selected: AnyHashable?
 
@@ -82,7 +102,7 @@ struct HashableTuple: Hashable {
     }
 }
 
-class Layout<Center: UIView, Value: Hashable>: UICollectionViewFlowLayout {
+class Layout<Center: NSView, Value: Hashable>: NSCollectionViewFlowLayout {
     private let maxAngle = CGFloat.pi / 2
 
     private var _halfDim: CGFloat {
@@ -95,7 +115,7 @@ class Layout<Center: UIView, Value: Hashable>: UICollectionViewFlowLayout {
 
     private var _visibleRect: CGRect {
         if let cv = collectionView {
-            return CGRect(origin: cv.contentOffset, size: cv.bounds.size)
+            return CGRect(origin: cv.contentOffset, size: cv.contentSize)
         }
         return CGRect.zero
     }
@@ -103,7 +123,7 @@ class Layout<Center: UIView, Value: Hashable>: UICollectionViewFlowLayout {
     var selected: Value {
         didSet {
             if oldValue != self.selected {
-                self.invalidateLayout()
+//                self.invalidateLayout()
             }
         }
     }
@@ -111,7 +131,7 @@ class Layout<Center: UIView, Value: Hashable>: UICollectionViewFlowLayout {
     var centerSize: Int = 1 {
         didSet {
             if self.centerSize != oldValue {
-                self.invalidateLayout()
+//                self.invalidateLayout()
             }
         }
     }
@@ -124,10 +144,12 @@ class Layout<Center: UIView, Value: Hashable>: UICollectionViewFlowLayout {
         self.configureCenter = configureCenter
         super.init()
 
-        sectionInset = UIEdgeInsets(top: 0.0, left: 0.0, bottom: 0.0, right: 0.0)
+        sectionInset = NSEdgeInsets(top: 0.0, left: 0.0, bottom: 0.0, right: 0.0)
         minimumLineSpacing = 0.0
+        estimatedItemSize = .zero
         self.register(CenterView<Center>.self, forDecorationViewOfKind: "center")
     }
+    
 
     @available(*, unavailable)
     required init?(coder: NSCoder) {
@@ -139,20 +161,20 @@ class Layout<Center: UIView, Value: Hashable>: UICollectionViewFlowLayout {
     }
 
     override func layoutAttributesForDecorationView(ofKind elementKind: String,
-                                                    at indexPath: IndexPath) -> UICollectionViewLayoutAttributes? {
+                                                    at indexPath: IndexPath) -> NSCollectionViewLayoutAttributes? {
         if elementKind == "center", indexPath == IndexPath(item: 0, section: 0) {
             let attributes = CenterAttributes<Center>(selected: HashableTuple(selected, centerSize, _visibleRect.width),
                                                       indexPath: indexPath)
             attributes.configure = { [unowned self] view in self.configureCenter(view, self.selected) }
             attributes.frame = CGRect(x: 0, y: self._mid, width: self._visibleRect.width, height: 0)
-            attributes.zIndex = 2
+            attributes.zIndex = 200
             return attributes
         }
         return nil
     }
 
-    override public func layoutAttributesForItem(at indexPath: IndexPath) -> UICollectionViewLayoutAttributes? {
-        if let attributes = super.layoutAttributesForItem(at: indexPath)?.copy() as? UICollectionViewLayoutAttributes {
+    override public func layoutAttributesForItem(at indexPath: IndexPath) -> NSCollectionViewLayoutAttributes? {
+        if let attributes = super.layoutAttributesForItem(at: indexPath)?.copy() as? NSCollectionViewLayoutAttributes {
             self.adjust(attributes: attributes)
             return attributes
         }
@@ -160,30 +182,26 @@ class Layout<Center: UIView, Value: Hashable>: UICollectionViewFlowLayout {
         return nil
     }
 
-    private func adjust(attributes: UICollectionViewLayoutAttributes) {
+    private func adjust(attributes: NSCollectionViewLayoutAttributes) {
         if attributes.frame.midY > self._mid {
-            attributes.frame.origin.y -= min(attributes.frame.midY - self._mid,
+            let y = attributes.frame.origin.y - min(attributes.frame.midY - self._mid,
                                              attributes.frame.height * CGFloat(self.centerSize - 1))
+            print("Attributes", attributes.frame.origin, y)
+            attributes.frame.origin.y = y
         }
-        let distance = self._mid - attributes.frame.midY
-        let currentAngle = self.maxAngle * distance / self._halfDim / (CGFloat.pi / 2)
-        var transform = CATransform3DIdentity
-
-        transform = CATransform3DTranslate(transform, 0, distance, -self._halfDim - 20)
-        transform = CATransform3DRotate(transform, currentAngle, 1, 0, 0)
-        transform = CATransform3DTranslate(transform, 0, 0, self._halfDim)
-
-        attributes.transform3D = transform
-        attributes.isHidden = abs(currentAngle) > self.maxAngle
-        attributes.zIndex = 1
+//        let distance = self._mid - attributes.frame.midY
+//        let currentAngle = self.maxAngle * distance / self._halfDim / (CGFloat.pi / 2)
+//
+//        attributes.isHidden = abs(currentAngle) > self.maxAngle
+//        attributes.zIndex = 1
     }
 
-    public func originalAttributesForItem(at indexPath: IndexPath) -> UICollectionViewLayoutAttributes? {
+    public func originalAttributesForItem(at indexPath: IndexPath) -> NSCollectionViewLayoutAttributes? {
         super.layoutAttributesForItem(at: indexPath)
     }
 
-    override public func layoutAttributesForElements(in rect: CGRect) -> [UICollectionViewLayoutAttributes]? {
-        var attributes: [UICollectionViewLayoutAttributes] = []
+    override public func layoutAttributesForElements(in rect: CGRect) -> [NSCollectionViewLayoutAttributes] {
+        var attributes: [NSCollectionViewLayoutAttributes] = []
         if self.collectionView!.numberOfSections > 0 {
             for i in 0 ..< self.collectionView!.numberOfItems(inSection: 0) {
                 let indexPath = IndexPath(item: i, section: 0)
@@ -194,7 +212,7 @@ class Layout<Center: UIView, Value: Hashable>: UICollectionViewFlowLayout {
             }
 
             if self.collectionView!.numberOfItems(inSection: 0) > 0,
-               let deco = self.layoutAttributesForDecorationView(ofKind: "center", at: IndexPath(row: 0, section: 0)) {
+               let deco = self.layoutAttributesForDecorationView(ofKind: "center", at: IndexPath(item: 0, section: 0)) {
                 attributes.append(deco)
             }
         }
@@ -202,3 +220,4 @@ class Layout<Center: UIView, Value: Hashable>: UICollectionViewFlowLayout {
         return attributes
     }
 }
+#endif
