@@ -5,6 +5,7 @@ import AppKit
 protocol NSScrollViewDelegate: AnyObject {
     func scrollViewDidScroll(_ scrollView: NSScrollView)
     func scrollViewDidEndScrolling(_ scrollView: NSScrollView)
+    func scrollViewDidLayout()
 }
 class ScrollView: NSScrollView {
     weak var delegate: NSScrollViewDelegate?
@@ -26,6 +27,11 @@ class ScrollView: NSScrollView {
             })
     }
 
+    override func layout() {
+        super.layout()
+        self.delegate?.scrollViewDidLayout()
+    }
+
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
@@ -40,7 +46,7 @@ class ScrollView: NSScrollView {
 
 
 class CollectionPickerView<Cell: NSCollectionViewItem, Center: NSView, Value: Hashable>: NSView,
-NSCollectionViewDelegate, NSCollectionViewDelegateFlowLayout, NSScrollViewDelegate where Value: Comparable {
+                                                                                         NSCollectionViewDelegate, NSCollectionViewDelegateFlowLayout, NSScrollViewDelegate where Value: Comparable {
     var values: [Value] = [] {
         didSet {
             if self.values != oldValue {
@@ -54,11 +60,11 @@ NSCollectionViewDelegate, NSCollectionViewDelegateFlowLayout, NSScrollViewDelega
             }
         }
     }
-//
-//    override func viewDidMoveToSuperview() {
-//        super.viewDidMoveToSuperview()
-//                    self.scrollToItem(at: self.selectedIndex, animated: false)
-//    }
+
+    override func viewDidMoveToSuperview() {
+        super.viewDidMoveToSuperview()
+        self.scrollToItem(at: self.selectedIndex, animated: false)
+    }
 
     private static var itemIdentifier: NSUserInterfaceItemIdentifier { NSUserInterfaceItemIdentifier("wheelpicker.item") }
 
@@ -166,29 +172,29 @@ NSCollectionViewDelegate, NSCollectionViewDelegateFlowLayout, NSScrollViewDelega
 
         self.reload()
 
-//        self.isAccessibilityElement = true
-//        self.accessibilityTraits.insert(NSAccessibilityTraits.adjustable)
+        //        self.isAccessibilityElement = true
+        //        self.accessibilityTraits.insert(NSAccessibilityTraits.adjustable)
         self.updateAccessibility()
     }
 
-//    override func accessibilityIncrement() {
-//        let new = self.selectedIndex + 1
-//        if self.values.indices.contains(new) {
-//            self.scrollToItem(at: new)
-//        }
-//    }
-//
-//    override func accessibilityDecrement() {
-//        let new = self.selectedIndex - 1
-//        if self.values.indices.contains(new) {
-//            self.scrollToItem(at: new)
-//        }
-//    }
+    //    override func accessibilityIncrement() {
+    //        let new = self.selectedIndex + 1
+    //        if self.values.indices.contains(new) {
+    //            self.scrollToItem(at: new)
+    //        }
+    //    }
+    //
+    //    override func accessibilityDecrement() {
+    //        let new = self.selectedIndex - 1
+    //        if self.values.indices.contains(new) {
+    //            self.scrollToItem(at: new)
+    //        }
+    //    }
 
     private func updateAccessibility() {
         let value = self.selectedValue
-//        self.accessibilityValue = (value as? AccessibleValue)?.accessibilityText ?? (value as? CustomStringConvertible)?
-//            .description
+        //        self.accessibilityValue = (value as? AccessibleValue)?.accessibilityText ?? (value as? CustomStringConvertible)?
+        //            .description
     }
 
 
@@ -209,10 +215,9 @@ NSCollectionViewDelegate, NSCollectionViewDelegateFlowLayout, NSScrollViewDelega
             return maskLayer
         }()
         self.sizeCache.removeAll()
-//        if !self.initializePosition {
-//            self.initializePosition = true
+        if self.scrollIndex != self.selectedIndex, !((self.collectionView.enclosingScrollView as? ScrollView)?.isScrolling ?? false) {
             self.scrollToItem(at: self.selectedIndex, animated: false)
-//        }
+        }
     }
 
     @available(*, unavailable)
@@ -222,12 +227,11 @@ NSCollectionViewDelegate, NSCollectionViewDelegateFlowLayout, NSScrollViewDelega
 
     private var initializePosition = false
 
-//    func collectionView(_ collectionView: NSCollectionView, willDisplay item: NSCollectionViewItem, forRepresentedObjectAt indexPath: IndexPath) {
-//        if !self.initializePosition {
-//            self.initializePosition = true
-//            self.scrollToItem(at: self.selectedIndex, animated: false)
-//        }
-//    }
+    func collectionView(_ collectionView: NSCollectionView, willDisplay item: NSCollectionViewItem, forRepresentedObjectAt indexPath: IndexPath) {
+        if self.scrollIndex != self.selectedIndex, !((self.collectionView.enclosingScrollView as? ScrollView)?.isScrolling ?? false) {
+            self.scrollToItem(at: self.selectedIndex, animated: false)
+        }
+    }
 
 
 
@@ -276,7 +280,9 @@ NSCollectionViewDelegate, NSCollectionViewDelegateFlowLayout, NSScrollViewDelega
         let point = CGPoint(x: self.collectionView.contentOffset.x,
                             y: self.offsetForItem(at: index))
 
-        print("Scroll", index, point, animated)
+        guard point.y > 0 else {
+            return
+        }
 
         if animated  {
             NSAnimationContext.current.allowsImplicitAnimation = true
@@ -287,7 +293,7 @@ NSCollectionViewDelegate, NSCollectionViewDelegateFlowLayout, NSScrollViewDelega
         self.selectedIndex = index
     }
 
-    func didScroll(end: Bool) {
+    var scrollIndex: Int? {
         let mid = CGRect(x: self.collectionView.contentOffset.x + self.bounds.width / 2,
                          y: self.collectionView.contentOffset.y + self.bounds.height / 2,
                          width: 1,
@@ -298,7 +304,11 @@ NSCollectionViewDelegate, NSCollectionViewDelegateFlowLayout, NSScrollViewDelega
         .compactMap(self.collectionView.indexPath(for:))
         .sorted()
 
-        if let index = cells.first?.item {
+        return cells.first?.item
+    }
+
+    func didScroll(end: Bool) {
+        if let index = self.scrollIndex {
             self.selectedIndex = index
             if end {
                 self.scrollToItem(at: index, animated: true)
@@ -312,6 +322,13 @@ NSCollectionViewDelegate, NSCollectionViewDelegateFlowLayout, NSScrollViewDelega
 
     func scrollViewDidScroll(_ scrollView: NSScrollView) {
         self.didScroll(end: false)
+    }
+
+
+    func scrollViewDidLayout() {
+        if self.scrollIndex != self.selectedIndex, !((self.collectionView.enclosingScrollView as? ScrollView)?.isScrolling ?? false) {
+            self.scrollToItem(at: self.selectedIndex, animated: false)
+        }
     }
 
     func collectionView(_ collectionView: NSCollectionView, didSelectItemsAt indexPaths: Set<IndexPath>) {
