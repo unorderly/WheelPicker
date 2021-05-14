@@ -105,7 +105,6 @@ final class NSHostingCell<Content: View>: NSCollectionViewItem {
         } else {
             let hosting = SwiftUI.NSHostingView(rootView: content)
 
-//            self.view.layer?.backgroundColor = NSColor.clear.cgColor
             hosting.translatesAutoresizingMaskIntoConstraints = false
             hosting.layer?.backgroundColor = NSColor.clear.cgColor
 

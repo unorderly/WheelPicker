@@ -120,18 +120,13 @@ class Layout<Center: NSView, Value: Hashable>: NSCollectionViewFlowLayout {
         return CGRect.zero
     }
 
-    var selected: Value {
-        didSet {
-            if oldValue != self.selected {
-//                self.invalidateLayout()
-            }
-        }
-    }
+    var selected: Value
+    
 
     var centerSize: Int = 1 {
         didSet {
             if self.centerSize != oldValue {
-//                self.invalidateLayout()
+                self.invalidateLayout()
             }
         }
     }
@@ -186,14 +181,8 @@ class Layout<Center: NSView, Value: Hashable>: NSCollectionViewFlowLayout {
         if attributes.frame.midY > self._mid {
             let y = attributes.frame.origin.y - min(attributes.frame.midY - self._mid,
                                              attributes.frame.height * CGFloat(self.centerSize - 1))
-            print("Attributes", attributes.frame.origin, y)
             attributes.frame.origin.y = y
         }
-//        let distance = self._mid - attributes.frame.midY
-//        let currentAngle = self.maxAngle * distance / self._halfDim / (CGFloat.pi / 2)
-//
-//        attributes.isHidden = abs(currentAngle) > self.maxAngle
-//        attributes.zIndex = 1
     }
 
     public func originalAttributesForItem(at indexPath: IndexPath) -> NSCollectionViewLayoutAttributes? {

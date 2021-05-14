@@ -32,7 +32,6 @@ class ScrollView: NSScrollView {
 
     override func scrollWheel(with event: NSEvent) {
         super.scrollWheel(with: event)
-//        print("Scroll", event.scrollingDeltaY, event.hasPreciseScrollingDeltas, event.phase, event.momentumPhase, self.documentVisibleRect.origin)
         self.isScrolling = true
         delegate?.scrollViewDidScroll(self)
         self.endPublisher.send(())
@@ -116,17 +115,11 @@ NSCollectionViewDelegate, NSCollectionViewDelegateFlowLayout, NSScrollViewDelega
         set { self.cvLayout?.configureCenter = newValue }
     }
 
-//    var centerSize: Int {
-//        get { self.cvLayout?.centerSize ?? 1 }
-//        set { self.cvLayout?.centerSize = newValue }
-//    }
-
-    var centerSize: Int = 1 {
-        didSet {
-            self.cvLayout?.centerSize = self.centerSize
-            self.reload()
-        }
+    var centerSize: Int {
+        get { self.cvLayout?.centerSize ?? 1 }
+        set { self.cvLayout?.centerSize = newValue }
     }
+
     init(values: [Value],
          selected: Value,
          configureCell: @escaping (Cell, Value) -> Void,
