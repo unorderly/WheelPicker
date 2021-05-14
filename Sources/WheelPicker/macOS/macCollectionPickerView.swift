@@ -54,11 +54,11 @@ NSCollectionViewDelegate, NSCollectionViewDelegateFlowLayout, NSScrollViewDelega
             }
         }
     }
-
-    override func viewDidMoveToSuperview() {
-        super.viewDidMoveToSuperview()
-                    self.scrollToItem(at: self.selectedIndex, animated: false)
-    }
+//
+//    override func viewDidMoveToSuperview() {
+//        super.viewDidMoveToSuperview()
+//                    self.scrollToItem(at: self.selectedIndex, animated: false)
+//    }
 
     private static var itemIdentifier: NSUserInterfaceItemIdentifier { NSUserInterfaceItemIdentifier("wheelpicker.item") }
 
@@ -211,7 +211,7 @@ NSCollectionViewDelegate, NSCollectionViewDelegateFlowLayout, NSScrollViewDelega
         self.sizeCache.removeAll()
 //        if !self.initializePosition {
 //            self.initializePosition = true
-//            self.scrollToItem(at: self.selectedIndex, animated: false)
+            self.scrollToItem(at: self.selectedIndex, animated: false)
 //        }
     }
 
@@ -222,12 +222,12 @@ NSCollectionViewDelegate, NSCollectionViewDelegateFlowLayout, NSScrollViewDelega
 
     private var initializePosition = false
 
-    func collectionView(_ collectionView: NSCollectionView, willDisplay item: NSCollectionViewItem, forRepresentedObjectAt indexPath: IndexPath) {
-        if !self.initializePosition {
-            self.initializePosition = true
-            self.scrollToItem(at: self.selectedIndex, animated: false)
-        }
-    }
+//    func collectionView(_ collectionView: NSCollectionView, willDisplay item: NSCollectionViewItem, forRepresentedObjectAt indexPath: IndexPath) {
+//        if !self.initializePosition {
+//            self.initializePosition = true
+//            self.scrollToItem(at: self.selectedIndex, animated: false)
+//        }
+//    }
 
     func reload() {
         self.sizeCache.removeAll()

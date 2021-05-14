@@ -52,7 +52,7 @@ struct ContentView: View {
             .frame(height: 500)
             .transition(AnyTransition.opacity.animation(Animation.default)
                 .combined(with: .move(edge: .bottom)))
-            .animation(.spring())
+//            .animation(.spring())
         }
 //        .animation(.spring())
     }
