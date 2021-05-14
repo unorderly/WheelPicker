@@ -229,6 +229,8 @@ NSCollectionViewDelegate, NSCollectionViewDelegateFlowLayout, NSScrollViewDelega
 //        }
 //    }
 
+
+
     func reload() {
         self.sizeCache.removeAll()
         var snapshot = NSDiffableDataSourceSnapshot<Int, Value>()
