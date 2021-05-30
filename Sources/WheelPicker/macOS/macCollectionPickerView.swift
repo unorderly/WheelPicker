@@ -45,8 +45,7 @@ class ScrollView: NSScrollView {
 }
 
 
-class CollectionPickerView<Cell: NSCollectionViewItem, Center: NSView, Value: Hashable>: NSView,
-                                                                                         NSCollectionViewDelegate, NSCollectionViewDelegateFlowLayout, NSScrollViewDelegate where Value: Comparable {
+class CollectionPickerView<Cell: NSCollectionViewItem, Center: NSView, Value: Hashable>: NSView, NSCollectionViewDelegate, NSCollectionViewDelegateFlowLayout, NSScrollViewDelegate where Value: Comparable {
     var values: [Value] = [] {
         didSet {
             if self.values != oldValue {
