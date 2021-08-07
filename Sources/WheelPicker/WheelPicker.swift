@@ -28,6 +28,12 @@ public struct WheelPicker<Cell: View, Center: View, Value: Hashable>: View where
     }
 }
 
+extension Int: Identifiable {
+    public var id: Int {
+        self
+    }
+}
+
 struct WheelPicker_Previews: PreviewProvider {
     struct Preview: View {
         @State var center: Int = 1

@@ -1,18 +1,20 @@
 #if canImport(UIKit)
     import Combine
     import UIKit
+import SwiftUI
 
-    class CollectionPickerView<Cell: UICollectionViewCell, Center: UIView, Value: Hashable>: UIView,
-    UICollectionViewDelegate, UICollectionViewDelegateFlowLayout, UIScrollViewDelegate where Value: Comparable {
-        var values: [Value] = [] {
-            didSet {
-                if self.values != oldValue {
-                    let selected = oldValue[self.selectedIndex]
-                    if let index = self.values.firstIndex(of: selected) {
-                        self.selectedIndex = index
-                    } else {
-                        self.selectedIndex = 0
-                    }
+class CollectionPickerView<Cell: UICollectionViewCell, Center: UIView, Value: Hashable>:
+    UIView, UICollectionViewDelegate, UICollectionViewDelegateFlowLayout, UIScrollViewDelegate
+where Value: Comparable {
+    var values: [Value] = [] {
+        didSet {
+            if self.values != oldValue {
+                let selected = oldValue[self.selectedIndex]
+                if let index = self.values.firstIndex(where: { $0 >= selected  }) {
+                    self.selectedIndex = index
+                } else {
+                    self.selectedIndex = 0
+                }
                     self.reload()
                 }
             }
@@ -37,9 +39,10 @@
 
         public let publisher: CurrentValueSubject<Value, Never>
 
+
         private var selectedIndex: Int {
             didSet {
-                if oldValue != self.selectedIndex {
+                if oldValue != self.selectedIndex || overrideChanged {
                     if let overriden = self.overriddenSelected,
                        let index = self.values.lastIndex(where: { $0 < overriden }),
                        index != self.selectedIndex {
@@ -64,7 +67,12 @@
             }
         }
 
-        private var overriddenSelected: Value?
+        private var overrideChanged: Bool = false
+        private var overriddenSelected: Value? {
+            didSet {
+                overrideChanged = oldValue != self.overriddenSelected
+            }
+        }
 
         var configureCell: (Cell, Value) -> Void
 
@@ -217,6 +225,7 @@
                     self.scrollToItem(at: index)
                 }
             }
+            self.layout?.selected = value
         }
 
         func scrollToItem(at index: Int, animated: Bool = true) {
@@ -224,6 +233,7 @@
                 return
             }
 
+            print("Scrolling to \(index) - \(self.offsetForItem(at: index))")
             self.collectionView.setContentOffset(CGPoint(x: self.collectionView.contentOffset.x,
                                                          y: self.offsetForItem(at: index)),
                                                  animated: animated)

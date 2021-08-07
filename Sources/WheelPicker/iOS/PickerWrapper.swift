@@ -2,7 +2,7 @@
     import Combine
     import SwiftUI
 
-    struct PickerWrapper<Cell: View, Center: View, Value: Hashable>: UIViewRepresentable where Value: Comparable {
+struct PickerWrapper<Cell: View, Center: View, Value: Hashable>: UIViewRepresentable where Value: Comparable {
         let values: [Value]
 
         @Binding var selected: Value

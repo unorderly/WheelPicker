@@ -117,7 +117,11 @@
             }
         }
 
-        var configureCenter: (Center, Value) -> Void
+        var configureCenter: (Center, Value) -> Void {
+            didSet {
+                self.invalidateLayout()
+            }
+        }
 
         init(selected: Value,
              configureCenter: @escaping (Center, Value) -> Void) {
