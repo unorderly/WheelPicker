@@ -207,10 +207,15 @@ where Value: Comparable {
 
         private weak var collectionView: UICollectionView!
 
-        func offsetForItem(at index: Int) -> CGFloat {
-            var offset = self.layout?.originalAttributesForItem(at: IndexPath(item: index, section: 0))?.frame.midY ?? 0
-            offset -= self.bounds.height / 2
-            return offset
+        func offsetForItem(at index: Int) -> CGFloat? {
+            guard let layout = self.layout else {
+                return nil
+            }
+
+            if let offset = layout.originalAttributesForItem(at: IndexPath(item: index, section: 0))?.frame.midY, offset > 0 {
+                return offset - self.bounds.height / 2
+            }
+            return nil
         }
 
         func select(value: Value) {
@@ -233,10 +238,15 @@ where Value: Comparable {
                 return
             }
 
-            print("Scrolling to \(index) - \(self.offsetForItem(at: index))")
-            self.collectionView.setContentOffset(CGPoint(x: self.collectionView.contentOffset.x,
-                                                         y: self.offsetForItem(at: index)),
-                                                 animated: animated)
+            if let offset = self.offsetForItem(at: index) {
+                self.collectionView.setContentOffset(CGPoint(x: self.collectionView.contentOffset.x,
+                                                             y: offset),
+                                                     animated: animated)
+            } else {
+                DispatchQueue.main.async {
+                    self.reload()
+                }
+            }
             self.selectedIndex = index
         }
 
