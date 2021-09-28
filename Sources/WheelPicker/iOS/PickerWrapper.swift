@@ -103,6 +103,8 @@ struct PickerWrapper<Cell: View, Center: View, Value: Hashable>: UIViewRepresent
                 backgroundColor = .clear
                 hosting.view.translatesAutoresizingMaskIntoConstraints = false
                 hosting.view.backgroundColor = .clear
+//                hosting.view.layer.borderColor = UIColor.green.withAlphaComponent(0.5).cgColor
+//                hosting.view.layer.borderWidth = 2
                 self.contentView.addSubview(hosting.view)
 
                 NSLayoutConstraint.activate([
@@ -117,6 +119,18 @@ struct PickerWrapper<Cell: View, Center: View, Value: Hashable>: UIViewRepresent
                 ])
                 self.hosting = hosting
             }
+        }
+
+
+        override func layoutSubviews() {
+            super.layoutSubviews()
+            self.hosting?.view.setNeedsUpdateConstraints()
+        }
+
+        override func prepareForReuse() {
+            super.prepareForReuse()
+            self.hosting?.view.removeFromSuperview()
+            self.hosting = nil
         }
     }
 

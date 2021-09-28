@@ -10,15 +10,17 @@ where Value: Comparable {
         didSet {
             if self.values != oldValue {
                 let selected = oldValue[self.selectedIndex]
+                let oldIndex = self.selectedIndex
                 if let index = self.values.firstIndex(where: { $0 >= selected  }) {
                     self.selectedIndex = index
                 } else {
                     self.selectedIndex = 0
                 }
-                    self.reload()
-                }
+                print("[wheel] reset value", selected, oldIndex, self.values[self.selectedIndex], self.selectedIndex)
+                self.reload()
             }
         }
+    }
 
         private lazy var diffDataSource: UICollectionViewDiffableDataSource<Int, Value> = {
             let cellRegistration = UICollectionView.CellRegistration<Cell, Value> { cell, _, value in
@@ -155,6 +157,18 @@ where Value: Comparable {
                 .description
         }
 
+    private func updateSize() {
+        guard let value = self.values.first else {
+            return
+        }
+        self.configureCell(self.sizingCell, value)
+        let size = self.sizingCell
+            .systemLayoutSizeFitting(CGSize(width: collectionView.bounds.width, height: 0))
+
+        self.layout?.cellHeight = size.height
+
+    }
+
         override func layoutSubviews() {
             super.layoutSubviews()
             self.layer.mask = {
@@ -172,6 +186,7 @@ where Value: Comparable {
                 return maskLayer
             }()
             self.sizeCache.removeAll()
+            self.updateSize()
         }
 
         @available(*, unavailable)
@@ -191,9 +206,12 @@ where Value: Comparable {
 
         func reload() {
             self.sizeCache.removeAll()
+            self.updateSize()
             var snapshot = NSDiffableDataSourceSnapshot<Int, Value>()
             snapshot.appendSections([0])
             snapshot.appendItems(self.values, toSection: 0)
+
+            self.scrollToItem(at: self.selectedIndex, animated: false)
 
             self.diffDataSource.apply(snapshot, animatingDifferences: false) {
                 self.scrollToItem(at: self.selectedIndex, animated: false)
@@ -308,35 +326,33 @@ where Value: Comparable {
                             insetForSectionAt section: Int) -> UIEdgeInsets {
             let number = collectionView.numberOfItems(inSection: section)
             let firstIndexPath = IndexPath(item: 0, section: section)
-            let firstSize = self.collectionView(collectionView, layout: collectionViewLayout,
-                                                sizeForItemAt: firstIndexPath)
+            let firstSize = self.layout?.cellHeight ?? 0
             let lastIndexPath = IndexPath(item: number - 1, section: section)
-            let lastSize = self.collectionView(collectionView, layout: collectionViewLayout,
-                                               sizeForItemAt: lastIndexPath)
-            return UIEdgeInsets(top: (collectionView.bounds.size.height - firstSize.height / 2) / 2, left: 0,
-                                bottom: (collectionView.bounds.size.height - lastSize.height / 2) / 2, right: 0)
+            let lastSize = self.layout?.cellHeight ?? 0 //  self.collectionView(collectionView, layout: collectionViewLayout,
+            return UIEdgeInsets(top: (collectionView.bounds.size.height - firstSize / 2) / 2, left: 0,
+                                bottom: (collectionView.bounds.size.height - lastSize / 2) / 2, right: 0)
         }
 
         private var sizeCache: [AnyHashable: CGSize] = [:]
 
-        func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout,
-                            sizeForItemAt indexPath: IndexPath) -> CGSize {
-            guard let value = self.diffDataSource.itemIdentifier(for: indexPath) else {
-                return .zero
-            }
-            let cacheId: AnyHashable = (value as? SizeIdentifiable)?.sizeIdentifier ?? AnyHashable(value)
-            if let cached = sizeCache[cacheId] {
-                return cached
-            } else {
-                self.configureCell(self.sizingCell, value)
-                let size = self.sizingCell
-                    .systemLayoutSizeFitting(CGSize(width: collectionView.bounds.width, height: 0))
-
-                let new = CGSize(width: collectionView.bounds.width, height: size.height)
-                self.sizeCache[cacheId] = new
-                return new
-            }
-        }
+//        func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout,
+//                            sizeForItemAt indexPath: IndexPath) -> CGSize {
+//            guard let value = self.diffDataSource.itemIdentifier(for: indexPath) else {
+//                return .zero
+//            }
+//            let cacheId: AnyHashable = (value as? SizeIdentifiable)?.sizeIdentifier ?? AnyHashable(value)
+//            if let cached = sizeCache[cacheId] {
+//                return cached
+//            } else {
+//                self.configureCell(self.sizingCell, value)
+//                let size = self.sizingCell
+//                    .systemLayoutSizeFitting(CGSize(width: collectionView.bounds.width, height: 0))
+//
+//                let new = CGSize(width: collectionView.bounds.width, height: size.height)
+//                self.sizeCache[cacheId] = new
+//                return new
+//            }
+//        }
 
         func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout,
                             minimumInteritemSpacingForSectionAt section: Int) -> CGFloat {

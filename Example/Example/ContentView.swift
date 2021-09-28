@@ -2,40 +2,54 @@ import SwiftUI
 import WheelPicker
 
 struct ContentView: View {
-    @State var center = 2
+    struct Value: Comparable, Equatable, Hashable {
+        static func < (lhs: ContentView.Value, rhs: ContentView.Value) -> Bool {
+            lhs.index < rhs.index
+        }
 
-    @State var selected: Int = 50
+        let index: Int
+        let length: Int
+    }
+//    @State var center = 2
 
-    @State var values: [Int] = Array(stride(from: 0, through: 100, by: 5))
+    @State var selected: Value = Value(index: 50, length: 1)
+
+    @State var length: Int = 1
+
+    var values: [Value] {
+        stride(from: 0, through: 100, by: 1).map { Value.init(index: $0, length: self.length) }
+    }
 
     var body: some View {
         VStack {
-            Text("Steps: \(center) - Selected: \(selected)")
+            Text("Length: \(length) - Selected: \(selected.index) - \(selected.length)")
 
-            Stepper("Center", value: $center)
+            Stepper("Center", value: $length)
             Picker("Values", selection: $selected) {
                 ForEach(values, id: \.self) {
-                    Text("\($0)")
+                    Text("\($0.index)")
                         .tag($0)
                 }
             }
 
-            Button("Test") {
-                self.selected = 12
-            }
+//            Button("Test") {
+//                self.selected =
+//            }
 
             GeometryReader { proxy in
                 WheelPicker(values,
                             selected: $selected,
-                            centerSize: center,
+                            centerSize: length / 10 + 1,
                             cell: {
-                                Text("\($0)")
+                    Text("\($0.index) - \($0.length)")
                                     .font(.headline)
                                     .padding()
+                                    .background(Color.red.opacity(0.5))
+                                    .border(Color.black.opacity(0.5))
                             },
                             center: { value in
                                 Button(action: {}) {
-                                    Text("\(value) - \(value + center - 1)")
+                                    Text("\(value.index) - \(value.length)")
                                         .font(.headline)
                                         .padding()
                                         .frame(minWidth: 100)
