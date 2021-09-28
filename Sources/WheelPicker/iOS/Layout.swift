@@ -181,71 +181,27 @@
                                                  attributes.frame.height * CGFloat(self.centerSize - 1))
             }
 
-            print(indexPath.row, attributes.frame)
             let distance = self._mid - attributes.frame.midY
             let currentAngle = self.maxAngle * distance / self._halfDim / (CGFloat.pi / 2)
             var transform = CATransform3DIdentity
 
-//            transform = CATransform3DTranslate(transform, 0, distance, -self._halfDim - 20)
-//            transform = CATransform3DRotate(transform, currentAngle, 1, 0, 0)
-//            transform = CATransform3DTranslate(transform, 0, 0, self._halfDim)
+            transform = CATransform3DTranslate(transform, 0, distance, -self._halfDim - 20)
+            transform = CATransform3DRotate(transform, currentAngle, 1, 0, 0)
+            transform = CATransform3DTranslate(transform, 0, 0, self._halfDim)
 
             attributes.transform3D = transform
             attributes.isHidden = abs(currentAngle) > self.maxAngle
             attributes.zIndex = 1
 
             return attributes
-//            if let attributes = super.layoutAttributesForItem(at: indexPath)?
-//                .copy() as? UICollectionViewLayoutAttributes {
-//                self.adjust(attributes: attributes)
-//                return attributes
-//            }
-//
-//            return nil
         }
 
-        private func adjust(attributes: UICollectionViewLayoutAttributes) {
-            attributes.frame.origin.y = attributes.frame.height * CGFloat(attributes.indexPath.row)
-            if attributes.frame.midY > self._mid {
-                attributes.frame.origin.y -= min(attributes.frame.midY - self._mid,
-                                                 attributes.frame.height * CGFloat(self.centerSize - 1))
-            }
-            let distance = self._mid - attributes.frame.midY
-            let currentAngle = self.maxAngle * distance / self._halfDim / (CGFloat.pi / 2)
-            var transform = CATransform3DIdentity
-
-//            transform = CATransform3DTranslate(transform, 0, distance, -self._halfDim - 20)
-//            transform = CATransform3DRotate(transform, currentAngle, 1, 0, 0)
-//            transform = CATransform3DTranslate(transform, 0, 0, self._halfDim)
-
-//            attributes.transform3D = transform
-//            attributes.isHidden = abs(currentAngle) > self.maxAngle
-//            attributes.zIndex = 1
-        }
-
-        public func originalAttributesForItem(at indexPath: IndexPath) -> UICollectionViewLayoutAttributes? {
-            var attributes = UICollectionViewLayoutAttributes(forCellWith: indexPath)
-            attributes.frame = CGRect(x: 0, y:
+        public func scrollRectForItem(at indexPath: IndexPath) -> CGRect {
+            CGRect(x: 0, y:
                                         self.cellHeight * CGFloat(indexPath.row),
                                       width: self.collectionView?.bounds.width ?? 0,
                                       height: self.cellHeight)
-//            if attributes.frame.midY > self._mid {
-//                attributes.frame.origin.y -= min(attributes.frame.midY - self._mid,
-//                                                 attributes.frame.height * CGFloat(self.centerSize - 1))
-//            }
-//            let distance = self._mid - attributes.frame.midY
-//            let currentAngle = self.maxAngle * distance / self._halfDim / (CGFloat.pi / 2)
-//            var transform = CATransform3DIdentity
-//
-//            transform = CATransform3DTranslate(transform, 0, distance, -self._halfDim - 20)
-//            transform = CATransform3DRotate(transform, currentAngle, 1, 0, 0)
-//            transform = CATransform3DTranslate(transform, 0, 0, self._halfDim)
-//
-//            attributes.transform3D = transform
-//            attributes.isHidden = abs(currentAngle) > self.maxAngle
-//            attributes.zIndex = 1
-
-            return attributes        }
+        }
 
         override public func layoutAttributesForElements(in rect: CGRect) -> [UICollectionViewLayoutAttributes]? {
             var attributes: [UICollectionViewLayoutAttributes] = []
