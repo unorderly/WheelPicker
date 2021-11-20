@@ -3,6 +3,7 @@ import Combine
 import UIKit
 import SwiftUI
 
+
 class CollectionPickerView<Cell: UICollectionViewCell, Center: UIView, Value: Hashable>:
     UIView, UICollectionViewDelegate, UICollectionViewDelegateFlowLayout, UIScrollViewDelegate
 where Value: Comparable {
@@ -101,6 +102,8 @@ where Value: Comparable {
 
         let cv = UICollectionView(frame: .zero, collectionViewLayout: layout)
         self.collectionView = cv
+        cv.delaysContentTouches = false
+        cv.canCancelContentTouches = true
         cv.delegate = self
         cv.dataSource = self.diffDataSource
         cv.isScrollEnabled = true
