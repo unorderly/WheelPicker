@@ -10,7 +10,6 @@ where Value: Comparable {
         didSet {
             if self.values != oldValue {
                 let selected = oldValue[self.selectedIndex]
-                let oldIndex = self.selectedIndex
                 if let index = self.values.firstIndex(where: { $0 >= selected  }) {
                     self.selectedIndex = index
                 } else {
@@ -198,6 +197,7 @@ where Value: Comparable {
                         forItemAt indexPath: IndexPath) {
         if !self.initializePosition {
             self.initializePosition = true
+            _ = self.layout?.shouldInvalidateLayout(forBoundsChange: self.collectionView.bounds)
             self.scrollToItem(at: self.selectedIndex, animated: false)
         }
     }
@@ -310,15 +310,6 @@ where Value: Comparable {
         } else {
             self.scrollToItem(at: indexPath.item)
         }
-    }
-
-    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout,
-                        insetForSectionAt section: Int) -> UIEdgeInsets {
-        guard let layout = layout else {
-            return .zero
-        }
-        return UIEdgeInsets(top: (collectionView.bounds.size.height - layout.cellHeight / 2) / 2, left: 0,
-                            bottom: (collectionView.bounds.size.height - layout.cellHeight / 2) / 2, right: 0)
     }
 
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout,

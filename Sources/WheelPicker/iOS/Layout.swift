@@ -137,7 +137,7 @@
             self.configureCenter = configureCenter
             super.init()
 
-            sectionInset = UIEdgeInsets(top: 0.0, left: 0.0, bottom: 0.0, right: 0.0)
+            sectionInset = UIEdgeInsets(top: 150, left: 0.0, bottom: 150, right: 0.0)
             minimumLineSpacing = 0.0
             self.register(CenterView<Center>.self, forDecorationViewOfKind: "center")
         }
@@ -148,11 +148,14 @@
         }
 
         override public func shouldInvalidateLayout(forBoundsChange newBounds: CGRect) -> Bool {
-            true
+            self.sectionInset.top = newBounds.height / 2 - cellHeight / 2
+            self.sectionInset.bottom = newBounds.height / 2 - cellHeight / 2
+            return true
         }
 
         override var collectionViewContentSize: CGSize {
             let height = self.cellHeight * CGFloat(self.collectionView?.numberOfItems(inSection: 0) ?? 0)
+            + self.sectionInset.top + self.sectionInset.bottom
             return .init(width: self.collectionView?.bounds.width ?? 0, height: height)
         }
 
@@ -173,7 +176,7 @@
         override public func layoutAttributesForItem(at indexPath: IndexPath) -> UICollectionViewLayoutAttributes? {
             let attributes = UICollectionViewLayoutAttributes(forCellWith: indexPath)
             attributes.frame = CGRect(x: 0, y:
-                                        self.cellHeight * CGFloat(indexPath.row),
+                                        self.cellHeight * CGFloat(indexPath.row) + self.sectionInset.top,
                                       width: self.collectionView?.bounds.width ?? 0,
                                       height: self.cellHeight)
             if attributes.frame.midY > self._mid {
@@ -198,7 +201,7 @@
 
         public func scrollRectForItem(at indexPath: IndexPath) -> CGRect {
             CGRect(x: 0, y:
-                                        self.cellHeight * CGFloat(indexPath.row),
+                    self.cellHeight * CGFloat(indexPath.row) + self.sectionInset.top,
                                       width: self.collectionView?.bounds.width ?? 0,
                                       height: self.cellHeight)
         }
@@ -224,4 +227,5 @@
             return attributes
         }
     }
+
 #endif
