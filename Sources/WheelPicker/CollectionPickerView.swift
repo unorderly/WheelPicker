@@ -1,4 +1,3 @@
-#if canImport(UIKit)
 import Combine
 import UIKit
 import SwiftUI
@@ -325,4 +324,3 @@ where Value: Comparable {
         0
     }
 }
-#endif
