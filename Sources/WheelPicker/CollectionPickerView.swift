@@ -35,7 +35,15 @@ where Value: Comparable {
 
     private lazy var sizingCell = Cell()
 
+    #if !os(xrOS)
     private let selectionFeedback = UISelectionFeedbackGenerator()
+    #endif
+    
+    func haptics() {
+#if !os(xrOS)
+        self.selectionFeedback.selectionChanged()
+#endif
+    }
 
     public let publisher: CurrentValueSubject<Value, Never>
 
@@ -138,7 +146,7 @@ where Value: Comparable {
         let new = self.selectedIndex + 1
         if self.values.indices.contains(new) {
             self.scrollToItem(at: new)
-            self.selectionFeedback.selectionChanged()
+            self.haptics()
         }
     }
 
@@ -146,7 +154,7 @@ where Value: Comparable {
         let new = self.selectedIndex - 1
         if self.values.indices.contains(new) {
             self.scrollToItem(at: new)
-            self.selectionFeedback.selectionChanged()
+            self.haptics()
         }
     }
 
@@ -273,7 +281,7 @@ where Value: Comparable {
 
         if let index = cells.first?.item {
             if index != self.selectedIndex {
-                self.selectionFeedback.selectionChanged()
+                self.haptics()
             }
             self.selectedIndex = index
             if end {
@@ -297,7 +305,9 @@ where Value: Comparable {
     }
 
     func scrollViewWillBeginDragging(_ scrollView: UIScrollView) {
+#if !os(xrOS)
         self.selectionFeedback.prepare()
+#endif
     }
 
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
@@ -305,7 +315,7 @@ where Value: Comparable {
             return
         }
 
-        self.selectionFeedback.selectionChanged()
+        self.haptics()
 
         if indexPath.item > self.selectedIndex {
             self.scrollToItem(at: indexPath.item - self.centerSize + 1)
