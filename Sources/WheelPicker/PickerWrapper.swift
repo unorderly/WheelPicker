@@ -61,7 +61,11 @@ class PickerModel<Value: Hashable> {
         DispatchQueue.main.async {
             self.cancallable?.cancel()
             self.cancallable = publisher
-                .assign(to: \.selected, on: self)
+                .sink(receiveValue: { [weak self] value in
+                    if self?.selected != value {
+                        self?.selected = value
+                    }
+                })
         }
     }
 }
