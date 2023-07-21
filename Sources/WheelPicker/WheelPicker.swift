@@ -1,4 +1,3 @@
-import Combine
 import SwiftUI
 
 public struct WheelPicker<Cell: View, Center: View, Value: Hashable>: View where Value: Comparable {

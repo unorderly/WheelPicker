@@ -1,6 +1,5 @@
 import Combine
 import UIKit
-import SwiftUI
 
 
 class CollectionPickerView<Cell: UICollectionViewCell, Center: UIView, Value: Hashable>:
