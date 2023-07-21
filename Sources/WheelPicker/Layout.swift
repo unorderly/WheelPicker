@@ -226,4 +226,3 @@ class Layout<Center: UIView, Value: Hashable>: UICollectionViewFlowLayout {
         return attributes
     }
 }
-

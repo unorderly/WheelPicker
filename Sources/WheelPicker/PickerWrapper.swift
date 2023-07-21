@@ -136,4 +136,3 @@ final class UIHostingCell<Content: View>: UICollectionViewCell {
         self.hosting = nil
     }
 }
-

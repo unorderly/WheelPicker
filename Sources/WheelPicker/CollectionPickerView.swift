@@ -24,8 +24,7 @@ where Value: Comparable {
         let cellRegistration = UICollectionView.CellRegistration<Cell, Value> { cell, _, value in
             self.configureCell(cell, value)
         }
-        let dataSource = UICollectionViewDiffableDataSource<Int, Value>(collectionView: self.collectionView) {
-            collectionView, indexPath, id in
+        let dataSource = UICollectionViewDiffableDataSource<Int, Value>(collectionView: self.collectionView) { collectionView, indexPath, id in
             collectionView.dequeueConfiguredReusableCell(using: cellRegistration,
                                                          for: indexPath,
                                                          item: id)
