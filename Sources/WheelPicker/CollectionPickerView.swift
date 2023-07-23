@@ -266,8 +266,8 @@ where Value: Comparable {
         let cells = self.collectionView.visibleCells.filter { cell in
             cell.frame.intersects(mid)
         }
-            .compactMap(self.collectionView.indexPath(for:))
-            .sorted()
+        .compactMap(self.collectionView.indexPath(for:))
+        .sorted()
 
         if let index = cells.first?.item {
             if index != self.selectedIndex {

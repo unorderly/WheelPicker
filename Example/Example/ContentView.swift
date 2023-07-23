@@ -10,7 +10,7 @@ struct ContentView: View {
         let index: Int
         let length: Int
     }
-//    @State var center = 2
+    //    @State var center = 2
 
     @State var selected: Value = Value(index: 50, length: 1)
 
@@ -32,16 +32,16 @@ struct ContentView: View {
                 }
             }
 
-//            Button("Test") {
-//                self.selected =
-//            }
+            //            Button("Test") {
+            //                self.selected =
+            //            }
 
             GeometryReader { proxy in
                 WheelPicker(values,
                             selected: $selected,
                             centerSize: length / 10 + 1,
                             cell: {
-                    Text("\($0.index) - \($0.length)")
+                                Text("\($0.index) - \($0.length)")
                                     .font(.headline)
                                     .padding()
                                     .background(Color.red.opacity(0.5))
@@ -64,7 +64,7 @@ struct ContentView: View {
             }
             .frame(height: 200)
             .transition(AnyTransition.opacity.animation(Animation.default)
-                .combined(with: .move(edge: .bottom)))
+                            .combined(with: .move(edge: .bottom)))
             .animation(.spring())
         }
         .animation(.spring())
