@@ -6,24 +6,27 @@ public struct WheelPicker<Cell: View, Center: View, Value: Hashable>: View where
     @Binding var selected: Value
 
     let centerSize: Int
+    let collectionViewBounces: Bool
 
     let cell: (Value) -> Cell
     let center: (Value) -> Center
 
     public init(_ values: [Value],
                 selected: Binding<Value>,
+                collectionViewBounces: Bool? = true,
                 centerSize: Int = 1,
                 cell: @escaping (Value) -> Cell,
                 center: @escaping (Value) -> Center) {
         self.values = values
         self._selected = selected
+        self.collectionViewBounces = collectionViewBounces ?? true
         self.cell = cell
         self.center = center
         self.centerSize = centerSize
     }
 
     public var body: some View {
-        PickerWrapper(values, selected: $selected, centerSize: centerSize, cell: cell, center: center)
+        PickerWrapper(values, selected: $selected, collectionViewBounces: collectionViewBounces, centerSize: centerSize, cell: cell, center: center)
     }
 }
 
