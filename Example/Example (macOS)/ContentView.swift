@@ -7,6 +7,8 @@ struct ContentView: View {
     @State var selected: Int = 50
 
     @State var values: [Int] = Array(stride(from: 0, through: 100, by: 5))
+    
+    let ENABLE_UNDERLYING_COLLECTIONVIEW_BOUNCE = true
 
     var body: some View {
         VStack {
@@ -27,6 +29,7 @@ struct ContentView: View {
             GeometryReader { proxy in
                 WheelPicker(values,
                             selected: $selected,
+                            collectionViewBounces: ENABLE_UNDERLYING_COLLECTIONVIEW_BOUNCE,
                             centerSize: center,
                             cell: {
                                 Text("\($0)")
