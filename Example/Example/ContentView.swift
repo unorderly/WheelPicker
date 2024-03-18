@@ -20,7 +20,7 @@ struct ContentView: View {
         stride(from: 0, through: 100, by: 1).map { Value.init(index: $0, length: self.length) }
     }
     
-    let ENABLE_UNDERLYING_COLLECTIONVIEW_BOUNCE = false
+    let enableUnderlyingCollectionViewBounce = false
 
     var body: some View {
         VStack {
@@ -41,7 +41,7 @@ struct ContentView: View {
             GeometryReader { proxy in
                 WheelPicker(values,
                             selected: $selected,
-                            collectionViewBounces: ENABLE_UNDERLYING_COLLECTIONVIEW_BOUNCE,
+                            collectionViewBounces: enableUnderlyingCollectionViewBounce,
                             centerSize: length / 10 + 1,
                             cell: {
                                 Text("\($0.index) - \($0.length)")
