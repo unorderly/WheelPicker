@@ -29,7 +29,7 @@ public struct WheelPicker<Cell: View, Center: View, Value: Hashable>: View where
     }
 
     public var body: some View {
-        PickerWrapper(values, selected: $selected, centerSize: centerSize, cell: cell, center: center)
+        PickerWrapper(values, selected: $selected, centerSize: centerSize, onScroll: onScroll, cell: cell, center: center)
     }
 }
 
