@@ -7,6 +7,7 @@ struct PickerWrapper<Cell: View, Center: View, Value: Hashable>: UIViewRepresent
     @Binding var selected: Value
 
     let centerSize: Int
+    let collectionViewBounces: Bool
 
     let cell: (Value) -> Cell
     let center: (Value) -> Center
@@ -17,6 +18,7 @@ struct PickerWrapper<Cell: View, Center: View, Value: Hashable>: UIViewRepresent
 
     init(_ values: [Value],
          selected: Binding<Value>,
+         collectionViewBounces: Bool? = true,
          centerSize: Int = 1,
          onScroll: @escaping () -> Void,
          cell: @escaping (Value) -> Cell,
@@ -24,6 +26,7 @@ struct PickerWrapper<Cell: View, Center: View, Value: Hashable>: UIViewRepresent
         self.values = values
         self.onScroll = onScroll
         self._selected = selected
+        self.collectionViewBounces = collectionViewBounces ?? true
         self.cell = cell
         self.center = center
         self.centerSize = centerSize
@@ -40,6 +43,7 @@ struct PickerWrapper<Cell: View, Center: View, Value: Hashable>: UIViewRepresent
     func makeUIView(context: Context) -> UIViewType {
         let picker = UIViewType(values: self.values,
                                 selected: self.selected,
+                                collectionViewBounces: self.collectionViewBounces,
                                 configureCell: { $0.set(value: self.cell($1)) },
                                 configureCenter: { $0.set(value: self.center($1)) })
         picker.centerSize = self.centerSize

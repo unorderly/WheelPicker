@@ -84,6 +84,7 @@ where Value: Comparable {
 
     init(values: [Value],
          selected: Value,
+         collectionViewBounces: Bool,
          configureCell: @escaping (Cell, Value) -> Void,
          configureCenter: @escaping (Center, Value) -> Void) {
         self.configureCell = configureCell
@@ -101,6 +102,7 @@ where Value: Comparable {
         cv.canCancelContentTouches = true
         cv.delegate = self
         cv.dataSource = self.diffDataSource
+        cv.bounces = collectionViewBounces
         cv.isScrollEnabled = true
         cv.showsHorizontalScrollIndicator = false
         cv.showsVerticalScrollIndicator = false
