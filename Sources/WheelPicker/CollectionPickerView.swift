@@ -33,8 +33,6 @@ where Value: Comparable {
 
     private lazy var sizingCell = Cell()
 
-    private let selectionFeedback = UISelectionFeedbackGenerator()
-
     public let publisher: CurrentValueSubject<Value, Never>
 
 
@@ -136,7 +134,6 @@ where Value: Comparable {
         let new = self.selectedIndex + 1
         if self.values.indices.contains(new) {
             self.scrollToItem(at: new)
-            self.selectionFeedback.selectionChanged()
         }
     }
 
@@ -144,7 +141,6 @@ where Value: Comparable {
         let new = self.selectedIndex - 1
         if self.values.indices.contains(new) {
             self.scrollToItem(at: new)
-            self.selectionFeedback.selectionChanged()
         }
     }
 
@@ -270,9 +266,6 @@ where Value: Comparable {
         .sorted()
 
         if let index = cells.first?.item {
-            if index != self.selectedIndex {
-                self.selectionFeedback.selectionChanged()
-            }
             self.selectedIndex = index
             if end {
                 self.scrollToItem(at: index, animated: true)
@@ -294,16 +287,10 @@ where Value: Comparable {
         }
     }
 
-    func scrollViewWillBeginDragging(_ scrollView: UIScrollView) {
-        self.selectionFeedback.prepare()
-    }
-
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         guard self.selectedIndex != indexPath.item else {
             return
         }
-
-        self.selectionFeedback.selectionChanged()
 
         if indexPath.item > self.selectedIndex {
             self.scrollToItem(at: indexPath.item - self.centerSize + 1)

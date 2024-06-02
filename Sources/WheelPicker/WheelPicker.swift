@@ -10,20 +10,23 @@ public struct WheelPicker<Cell: View, Center: View, Value: Hashable>: View where
     let cell: (Value) -> Cell
     let center: (Value) -> Center
 
+    let onScroll: () -> Void
     public init(_ values: [Value],
                 selected: Binding<Value>,
                 centerSize: Int = 1,
+                onScroll: @escaping () -> Void = { },
                 cell: @escaping (Value) -> Cell,
                 center: @escaping (Value) -> Center) {
         self.values = values
         self._selected = selected
+        self.onScroll = onScroll
         self.cell = cell
         self.center = center
         self.centerSize = centerSize
     }
 
     public var body: some View {
-        PickerWrapper(values, selected: $selected, centerSize: centerSize, cell: cell, center: center)
+        PickerWrapper(values, selected: $selected, centerSize: centerSize, onScroll: onScroll, cell: cell, center: center)
     }
 }
 

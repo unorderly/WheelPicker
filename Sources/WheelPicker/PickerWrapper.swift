@@ -11,14 +11,18 @@ struct PickerWrapper<Cell: View, Center: View, Value: Hashable>: UIViewRepresent
     let cell: (Value) -> Cell
     let center: (Value) -> Center
 
+    let onScroll: () -> Void
+
     typealias UIViewType = CollectionPickerView<UIHostingCell<Cell>, UIHostingView<Center>, Value>
 
     init(_ values: [Value],
          selected: Binding<Value>,
          centerSize: Int = 1,
+         onScroll: @escaping () -> Void,
          cell: @escaping (Value) -> Cell,
          center: @escaping (Value) -> Center) {
         self.values = values
+        self.onScroll = onScroll
         self._selected = selected
         self.cell = cell
         self.center = center
@@ -44,7 +48,7 @@ struct PickerWrapper<Cell: View, Center: View, Value: Hashable>: UIViewRepresent
     }
 
     func makeCoordinator() -> PickerModel<Value> {
-        PickerModel(selected: $selected)
+        PickerModel(selected: $selected, onScroll: self.onScroll)
     }
 }
 
@@ -53,8 +57,10 @@ class PickerModel<Value: Hashable> {
 
     private var cancallable: AnyCancellable?
 
-    init(selected: Binding<Value>) {
+    let onScroll: () -> Void
+    init(selected: Binding<Value>, onScroll: @escaping () -> Void) {
         self._selected = selected
+        self.onScroll = onScroll
     }
 
     func listing<P: Publisher>(to publisher: P) where P.Output == Value, P.Failure == Never {
@@ -64,6 +70,7 @@ class PickerModel<Value: Hashable> {
                 .sink(receiveValue: { [weak self] value in
                     if self?.selected != value {
                         self?.selected = value
+                        self?.onScroll()
                     }
                 })
         }
