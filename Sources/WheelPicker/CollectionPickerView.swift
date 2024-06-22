@@ -1,15 +1,14 @@
 import Combine
 import UIKit
 
-
 class CollectionPickerView<Cell: UICollectionViewCell, Center: UIView, Value: Hashable>:
     UIView, UICollectionViewDelegate, UICollectionViewDelegateFlowLayout, UIScrollViewDelegate
-where Value: Comparable {
+    where Value: Comparable {
     var values: [Value] = [] {
         didSet {
             if self.values != oldValue {
                 let selected = oldValue[self.selectedIndex]
-                if let index = self.values.firstIndex(where: { $0 >= selected  }) {
+                if let index = self.values.firstIndex(where: { $0 >= selected }) {
                     self.selectedIndex = index
                 } else {
                     self.selectedIndex = 0
@@ -35,10 +34,9 @@ where Value: Comparable {
 
     public let publisher: CurrentValueSubject<Value, Never>
 
-
     private var selectedIndex: Int {
         didSet {
-            if oldValue != self.selectedIndex || overrideChanged {
+            if oldValue != self.selectedIndex || self.overrideChanged {
                 if let overriden = self.overriddenSelected,
                    let index = self.values.lastIndex(where: { $0 < overriden }),
                    index != self.selectedIndex {
@@ -63,10 +61,10 @@ where Value: Comparable {
         }
     }
 
-    private var overrideChanged: Bool = false
+    private var overrideChanged = false
     private var overriddenSelected: Value? {
         didSet {
-            overrideChanged = oldValue != self.overriddenSelected
+            self.overrideChanged = oldValue != self.overriddenSelected
         }
     }
 
@@ -159,10 +157,9 @@ where Value: Comparable {
         }
         self.configureCell(self.sizingCell, value)
         let size = self.sizingCell
-            .systemLayoutSizeFitting(CGSize(width: collectionView.bounds.width, height: 0))
+            .systemLayoutSizeFitting(CGSize(width: self.collectionView.bounds.width, height: 0))
 
         self.layout?.cellHeight = size.height
-
     }
 
     override func layoutSubviews() {

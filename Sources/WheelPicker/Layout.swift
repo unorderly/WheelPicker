@@ -147,8 +147,8 @@ class Layout<Center: UIView, Value: Hashable>: UICollectionViewFlowLayout {
     }
 
     override public func shouldInvalidateLayout(forBoundsChange newBounds: CGRect) -> Bool {
-        self.sectionInset.top = newBounds.height / 2 - cellHeight / 2
-        self.sectionInset.bottom = newBounds.height / 2 - cellHeight / 2
+        self.sectionInset.top = newBounds.height / 2 - self.cellHeight / 2
+        self.sectionInset.bottom = newBounds.height / 2 - self.cellHeight / 2
         return true
     }
 
@@ -175,9 +175,9 @@ class Layout<Center: UIView, Value: Hashable>: UICollectionViewFlowLayout {
     override public func layoutAttributesForItem(at indexPath: IndexPath) -> UICollectionViewLayoutAttributes? {
         let attributes = UICollectionViewLayoutAttributes(forCellWith: indexPath)
         attributes.frame = CGRect(x: 0, y:
-                                    self.cellHeight * CGFloat(indexPath.row) + self.sectionInset.top,
-                                  width: self.collectionView?.bounds.width ?? 0,
-                                  height: self.cellHeight)
+            self.cellHeight * CGFloat(indexPath.row) + self.sectionInset.top,
+            width: self.collectionView?.bounds.width ?? 0,
+            height: self.cellHeight)
         if attributes.frame.midY > self._mid {
             attributes.frame.origin.y -= min(attributes.frame.midY - self._mid,
                                              attributes.frame.height * CGFloat(self.centerSize - 1))
@@ -200,15 +200,15 @@ class Layout<Center: UIView, Value: Hashable>: UICollectionViewFlowLayout {
 
     public func scrollRectForItem(at indexPath: IndexPath) -> CGRect {
         CGRect(x: 0, y:
-                self.cellHeight * CGFloat(indexPath.row) + self.sectionInset.top,
-               width: self.collectionView?.bounds.width ?? 0,
-               height: self.cellHeight)
+            self.cellHeight * CGFloat(indexPath.row) + self.sectionInset.top,
+            width: self.collectionView?.bounds.width ?? 0,
+            height: self.cellHeight)
     }
 
     override public func layoutAttributesForElements(in rect: CGRect) -> [UICollectionViewLayoutAttributes]? {
         var attributes: [UICollectionViewLayoutAttributes] = []
         if self.collectionView!.numberOfSections > 0 {
-            for i in 0 ..< self.collectionView!.numberOfItems(inSection: 0) {
+            for i in 0..<self.collectionView!.numberOfItems(inSection: 0) {
                 let indexPath = IndexPath(item: i, section: 0)
                 let attr = self.layoutAttributesForItem(at: indexPath)!
                 if attr.frame.intersects(rect), !attr.isHidden {

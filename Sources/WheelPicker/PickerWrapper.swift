@@ -52,7 +52,7 @@ struct PickerWrapper<Cell: View, Center: View, Value: Hashable>: UIViewRepresent
     }
 
     func makeCoordinator() -> PickerModel<Value> {
-        PickerModel(selected: $selected, onScroll: self.onScroll)
+        PickerModel(selected: self.$selected, onScroll: self.onScroll)
     }
 }
 
@@ -134,7 +134,6 @@ final class UIHostingCell<Content: View>: UICollectionViewCell {
             self.hosting = hosting
         }
     }
-
 
     override func layoutSubviews() {
         super.layoutSubviews()

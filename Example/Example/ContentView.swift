@@ -10,25 +10,26 @@ struct ContentView: View {
         let index: Int
         let length: Int
     }
+
     //    @State var center = 2
 
-    @State var selected: Value = Value(index: 50, length: 1)
+    @State var selected: Value = .init(index: 50, length: 1)
 
     @State var length: Int = 1
 
     var values: [Value] {
-        stride(from: 0, through: 100, by: 1).map { Value.init(index: $0, length: self.length) }
+        stride(from: 0, through: 100, by: 1).map { Value(index: $0, length: self.length) }
     }
-    
+
     let enableUnderlyingCollectionViewBounce = false
 
     var body: some View {
         VStack {
-            Text("Length: \(length) - Selected: \(selected.index) - \(selected.length)")
+            Text("Length: \(self.length) - Selected: \(self.selected.index) - \(self.selected.length)")
 
-            Stepper("Center", value: $length)
-            Picker("Values", selection: $selected) {
-                ForEach(values, id: \.self) {
+            Stepper("Center", value: self.$length)
+            Picker("Values", selection: self.$selected) {
+                ForEach(self.values, id: \.self) {
                     Text("\($0.index)")
                         .tag($0)
                 }
@@ -39,10 +40,10 @@ struct ContentView: View {
             //            }
 
             GeometryReader { proxy in
-                WheelPicker(values,
-                            selected: $selected,
-                            collectionViewBounces: enableUnderlyingCollectionViewBounce,
-                            centerSize: length / 10 + 1,
+                WheelPicker(self.values,
+                            selected: self.$selected,
+                            collectionViewBounces: self.enableUnderlyingCollectionViewBounce,
+                            centerSize: self.length / 10 + 1,
                             cell: {
                                 Text("\($0.index) - \($0.length)")
                                     .font(.headline)
@@ -51,7 +52,7 @@ struct ContentView: View {
                                     .border(Color.black.opacity(0.5))
                             },
                             center: { value in
-                                Button(action: {}) {
+                                Button(action: { }) {
                                     Text("\(value.index) - \(value.length)")
                                         .font(.headline)
                                         .padding()
@@ -61,13 +62,13 @@ struct ContentView: View {
                                         .shadow(color: Color.black.opacity(0.12), radius: 4)
                                 }
                             })
-                    .accessibility(label: Text("Time Picker"))
-                    .accessibility(hint: Text(hint))
-                    .frame(width: proxy.size.width)
+                            .accessibility(label: Text("Time Picker"))
+                            .accessibility(hint: Text(self.hint))
+                            .frame(width: proxy.size.width)
             }
             .frame(height: 200)
             .transition(AnyTransition.opacity.animation(Animation.default)
-                            .combined(with: .move(edge: .bottom)))
+                .combined(with: .move(edge: .bottom)))
             .animation(.spring())
         }
         .animation(.spring())

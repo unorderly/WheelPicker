@@ -7,16 +7,16 @@ struct ContentView: View {
     @State var selected: Int = 50
 
     @State var values: [Int] = Array(stride(from: 0, through: 100, by: 5))
-    
+
     let enableUnderlyingCollectionViewBounce = true
 
     var body: some View {
         VStack {
-            Text("Steps: \(center) - Selected: \(selected)")
+            Text("Steps: \(self.center) - Selected: \(self.selected)")
 
-            Stepper("Center", value: $center)
-            Picker("Values", selection: $selected) {
-                ForEach(values, id: \.self) {
+            Stepper("Center", value: self.$center)
+            Picker("Values", selection: self.$selected) {
+                ForEach(self.values, id: \.self) {
                     Text("\($0)")
                         .tag($0)
                 }
@@ -27,18 +27,18 @@ struct ContentView: View {
             }
 
             GeometryReader { proxy in
-                WheelPicker(values,
-                            selected: $selected,
-                            collectionViewBounces: enableUnderlyingCollectionViewBounce,
-                            centerSize: center,
+                WheelPicker(self.values,
+                            selected: self.$selected,
+                            collectionViewBounces: self.enableUnderlyingCollectionViewBounce,
+                            centerSize: self.center,
                             cell: {
                                 Text("\($0)")
                                     .font(.headline)
                                     .padding()
                             },
                             center: { value in
-                                Button(action: {}) {
-                                    Text("\(value) - \(value + center - 1)")
+                                Button(action: { }) {
+                                    Text("\(value) - \(value + self.center - 1)")
                                         .font(.headline)
                                         .padding()
                                         .frame(minWidth: 100)
@@ -48,13 +48,13 @@ struct ContentView: View {
                                 }
                                 .buttonStyle(BorderlessButtonStyle())
                             })
-                    .accessibility(label: Text("Time Picker"))
-                    .accessibility(hint: Text(hint))
-                    .frame(width: proxy.size.width)
+                            .accessibility(label: Text("Time Picker"))
+                            .accessibility(hint: Text(self.hint))
+                            .frame(width: proxy.size.width)
             }
             .frame(height: 500)
             .transition(AnyTransition.opacity.animation(Animation.default)
-                            .combined(with: .move(edge: .bottom)))
+                .combined(with: .move(edge: .bottom)))
             //            .animation(.spring())
         }
         //        .animation(.spring())

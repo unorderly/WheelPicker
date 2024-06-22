@@ -29,7 +29,7 @@ public struct WheelPicker<Cell: View, Center: View, Value: Hashable>: View where
     }
 
     public var body: some View {
-        PickerWrapper(values, selected: $selected, centerSize: centerSize, onScroll: onScroll, cell: cell, center: center)
+        PickerWrapper(self.values, selected: self.$selected, centerSize: self.centerSize, onScroll: self.onScroll, cell: self.cell, center: self.center)
     }
 }
 
@@ -45,31 +45,31 @@ struct WheelPicker_Previews: PreviewProvider {
 
         @State var selected: Int = 0
 
-        @State var values: [Int] = Array(0 ..< 100)
+        @State var values: [Int] = Array(0..<100)
 
-        public init() {}
+        public init() { }
 
         public var body: some View {
             VStack {
-                Text("Steps: \(center)")
-                Stepper("Center", value: $center)
-                Picker("Values", selection: $selected) {
-                    ForEach(values, id: \.self) {
+                Text("Steps: \(self.center)")
+                Stepper("Center", value: self.$center)
+                Picker("Values", selection: self.$selected) {
+                    ForEach(self.values, id: \.self) {
                         Text("\($0)")
                             .tag($0)
                     }
                 }
 
-                WheelPicker(values,
-                            selected: $selected,
-                            centerSize: center,
+                WheelPicker(self.values,
+                            selected: self.$selected,
+                            centerSize: self.center,
                             cell: {
                                 Text("\($0)")
                                     .font(.headline)
                                     .padding()
                             },
                             center: {
-                                Text("\($0) - \($0 + center - 1)")
+                                Text("\($0) - \($0 + self.center - 1)")
                                     .font(.headline)
                                     .padding()
                                     .frame(minWidth: 100)
@@ -77,8 +77,8 @@ struct WheelPicker_Previews: PreviewProvider {
                                     .cornerRadius(10)
                                     .shadow(color: Color.black.opacity(0.12), radius: 4)
                             })
-                    .accessibility(label: Text("Time Picker"))
-                    .accessibility(hint: Text(hint))
+                            .accessibility(label: Text("Time Picker"))
+                            .accessibility(hint: Text(self.hint))
             }
         }
 
