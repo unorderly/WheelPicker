@@ -11,12 +11,12 @@ public struct WheelPicker<Cell: View, Center: View, Value: Hashable>: View where
     let cell: (Value) -> Cell
     let center: (Value) -> Center
 
-    let onScroll: () -> Void
+    let onScroll: (Value, Value) -> Void
     public init(_ values: [Value],
                 selected: Binding<Value>,
                 collectionViewBounces: Bool? = true,
                 centerSize: Int = 1,
-                onScroll: @escaping () -> Void = { },
+                onScroll: @escaping (Value, Value) -> Void = { _, _ in },
                 cell: @escaping (Value) -> Cell,
                 center: @escaping (Value) -> Center) {
         self.values = values

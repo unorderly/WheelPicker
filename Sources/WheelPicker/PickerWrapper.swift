@@ -12,7 +12,7 @@ struct PickerWrapper<Cell: View, Center: View, Value: Hashable>: UIViewRepresent
     let cell: (Value) -> Cell
     let center: (Value) -> Center
 
-    let onScroll: () -> Void
+    let onScroll: (Value, Value) -> Void
 
     typealias UIViewType = CollectionPickerView<UIHostingCell<Cell>, UIHostingView<Center>, Value>
 
@@ -20,7 +20,7 @@ struct PickerWrapper<Cell: View, Center: View, Value: Hashable>: UIViewRepresent
          selected: Binding<Value>,
          collectionViewBounces: Bool? = true,
          centerSize: Int = 1,
-         onScroll: @escaping () -> Void,
+         onScroll: @escaping (Value, Value) -> Void,
          cell: @escaping (Value) -> Cell,
          center: @escaping (Value) -> Center) {
         self.values = values
@@ -61,8 +61,8 @@ class PickerModel<Value: Hashable> {
 
     private var cancallable: AnyCancellable?
 
-    let onScroll: () -> Void
-    init(selected: Binding<Value>, onScroll: @escaping () -> Void) {
+    let onScroll: (Value, Value) -> Void
+    init(selected: Binding<Value>, onScroll: @escaping (Value, Value) -> Void) {
         self._selected = selected
         self.onScroll = onScroll
     }
@@ -72,9 +72,9 @@ class PickerModel<Value: Hashable> {
             self.cancallable?.cancel()
             self.cancallable = publisher
                 .sink(receiveValue: { [weak self] value in
-                    if self?.selected != value {
-                        self?.selected = value
-                        self?.onScroll()
+                    if let self, self.selected != value {
+                        self.onScroll(self.selected, value)
+                        self.selected = value
                     }
                 })
         }
@@ -117,8 +117,6 @@ final class UIHostingCell<Content: View>: UICollectionViewCell {
             backgroundColor = .clear
             hosting.view.translatesAutoresizingMaskIntoConstraints = false
             hosting.view.backgroundColor = .clear
-            //                hosting.view.layer.borderColor = UIColor.green.withAlphaComponent(0.5).cgColor
-            //                hosting.view.layer.borderWidth = 2
             self.contentView.addSubview(hosting.view)
 
             NSLayoutConstraint.activate([
