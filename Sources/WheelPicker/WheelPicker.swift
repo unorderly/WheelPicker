@@ -33,7 +33,7 @@ public struct WheelPicker<Cell: View, Center: View, Value: Hashable>: View where
     }
 }
 
-extension Int: Identifiable {
+extension Int: @retroactive Identifiable {
     public var id: Int {
         self
     }
