@@ -5,7 +5,7 @@ import PackageDescription
 
 let package = Package(name: "WheelPicker",
                       platforms: [
-                          .iOS(.v16), .watchOS(.v9), .macCatalyst(.v16), .macOS(.v13)
+                          .iOS(.v17), .watchOS(.v10), .macCatalyst(.v17), .macOS(.v14)
                       ],
                       products: [
                           .library(name: "WheelPicker",
