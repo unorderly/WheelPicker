@@ -32,7 +32,7 @@ class CollectionPickerView<Cell: UICollectionViewCell, Center: UIView, Value: Ha
 
     private lazy var sizingCell = Cell()
 
-    public let publisher: CurrentValueSubject<Value, Never>
+    let publisher: CurrentValueSubject<Value, Never>
 
     private var selectedIndex: Int {
         didSet {
@@ -53,11 +53,11 @@ class CollectionPickerView<Cell: UICollectionViewCell, Center: UIView, Value: Ha
 
     private var selectedValue: Value {
         if let overriden = self.overriddenSelected {
-            return overriden
+            overriden
         } else if self.values.indices.contains(self.selectedIndex) {
-            return self.values[self.selectedIndex]
+            self.values[self.selectedIndex]
         } else {
-            return self.values[0]
+            self.values[0]
         }
     }
 

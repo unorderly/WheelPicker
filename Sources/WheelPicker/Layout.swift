@@ -146,7 +146,7 @@ class Layout<Center: UIView, Value: Hashable>: UICollectionViewFlowLayout {
         fatalError("init(coder:) has not been implemented")
     }
 
-    override public func shouldInvalidateLayout(forBoundsChange newBounds: CGRect) -> Bool {
+    override func shouldInvalidateLayout(forBoundsChange newBounds: CGRect) -> Bool {
         self.sectionInset.top = newBounds.height / 2 - self.cellHeight / 2
         self.sectionInset.bottom = newBounds.height / 2 - self.cellHeight / 2
         return true
@@ -172,7 +172,7 @@ class Layout<Center: UIView, Value: Hashable>: UICollectionViewFlowLayout {
         return nil
     }
 
-    override public func layoutAttributesForItem(at indexPath: IndexPath) -> UICollectionViewLayoutAttributes? {
+    override func layoutAttributesForItem(at indexPath: IndexPath) -> UICollectionViewLayoutAttributes? {
         let attributes = UICollectionViewLayoutAttributes(forCellWith: indexPath)
         attributes.frame = CGRect(x: 0, y:
             self.cellHeight * CGFloat(indexPath.row) + self.sectionInset.top,
@@ -198,14 +198,14 @@ class Layout<Center: UIView, Value: Hashable>: UICollectionViewFlowLayout {
         return attributes
     }
 
-    public func scrollRectForItem(at indexPath: IndexPath) -> CGRect {
+    func scrollRectForItem(at indexPath: IndexPath) -> CGRect {
         CGRect(x: 0, y:
             self.cellHeight * CGFloat(indexPath.row) + self.sectionInset.top,
             width: self.collectionView?.bounds.width ?? 0,
             height: self.cellHeight)
     }
 
-    override public func layoutAttributesForElements(in rect: CGRect) -> [UICollectionViewLayoutAttributes]? {
+    override func layoutAttributesForElements(in rect: CGRect) -> [UICollectionViewLayoutAttributes]? {
         var attributes: [UICollectionViewLayoutAttributes] = []
         if self.collectionView!.numberOfSections > 0 {
             for i in 0..<self.collectionView!.numberOfItems(inSection: 0) {

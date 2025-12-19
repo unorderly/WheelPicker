@@ -47,9 +47,9 @@ struct WheelPicker_Previews: PreviewProvider {
 
         @State var values: [Int] = Array(0..<100)
 
-        public init() { }
+        init() { }
 
-        public var body: some View {
+        var body: some View {
             VStack {
                 Text("Steps: \(self.center)")
                 Stepper("Center", value: self.$center)
@@ -97,7 +97,7 @@ struct WheelPicker_Previews: PreviewProvider {
         }
     }
 
-    public static var previews: some View {
+    static var previews: some View {
         Preview()
     }
 }
