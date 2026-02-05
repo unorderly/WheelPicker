@@ -1,3 +1,4 @@
+#if canImport(UIKit)
 import UIKit
 
 private class CenterView<View: UIView>: UICollectionReusableView {
@@ -226,3 +227,4 @@ class Layout<Center: UIView, Value: Hashable>: UICollectionViewFlowLayout {
         return attributes
     }
 }
+#endif

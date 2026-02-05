@@ -29,7 +29,12 @@ public struct WheelPicker<Cell: View, Center: View, Value: Hashable & Comparable
     }
 
     public var body: some View {
+        #if canImport(UIKit)
         PickerWrapper(self.values, selected: self.$selected, centerSize: self.centerSize, onScroll: self.onScroll, cell: self.cell, center: self.center)
+        #else
+        Text("WheelPicker (macOS placeholder)")
+            .foregroundStyle(.secondary)
+        #endif
     }
 }
 
@@ -39,6 +44,7 @@ extension Int: @retroactive Identifiable {
     }
 }
 
+#if canImport(UIKit)
 struct WheelPicker_Previews: PreviewProvider {
     struct Preview: View {
         @State var center: Int = 1
@@ -101,3 +107,4 @@ struct WheelPicker_Previews: PreviewProvider {
         Preview()
     }
 }
+#endif

@@ -1,5 +1,7 @@
+#if canImport(UIKit)
 import Combine
 import SwiftUI
+import UIKit
 
 struct PickerWrapper<Cell: View, Center: View, Value: Hashable & Comparable>: UIViewRepresentable {
     let values: [Value]
@@ -144,3 +146,4 @@ final class UIHostingCell<Content: View>: UICollectionViewCell {
         self.hosting = nil
     }
 }
+#endif

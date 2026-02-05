@@ -1,3 +1,4 @@
+#if canImport(UIKit)
 import Combine
 import UIKit
 
@@ -306,3 +307,4 @@ UIView, UICollectionViewDelegate, UICollectionViewDelegateFlowLayout, UIScrollVi
         0
     }
 }
+#endif
