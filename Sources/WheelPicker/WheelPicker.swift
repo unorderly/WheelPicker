@@ -31,9 +31,16 @@ public struct WheelPicker<Cell: View, Center: View, Value: Hashable & Comparable
     public var body: some View {
         #if canImport(UIKit)
         PickerWrapper(self.values, selected: self.$selected, centerSize: self.centerSize, onScroll: self.onScroll, cell: self.cell, center: self.center)
+        #elseif os(macOS)
+        PickerWrapper(self.values,
+                      selected: self.$selected,
+                      collectionViewBounces: self.collectionViewBounces,
+                      centerSize: self.centerSize,
+                      onScroll: self.onScroll,
+                      cell: self.cell,
+                      center: self.center)
         #else
-        Text("WheelPicker (macOS placeholder)")
-            .foregroundStyle(.secondary)
+        EmptyView()
         #endif
     }
 }
