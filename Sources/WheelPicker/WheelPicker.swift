@@ -1,6 +1,6 @@
 import SwiftUI
 
-public struct WheelPicker<Cell: View, Center: View, Value: Hashable>: View where Value: Comparable {
+public struct WheelPicker<Cell: View, Center: View, Value: Hashable & Comparable>: View {
     let values: [Value]
 
     @Binding var selected: Value

@@ -1,9 +1,8 @@
 import Combine
 import UIKit
 
-class CollectionPickerView<Cell: UICollectionViewCell, Center: UIView, Value: Hashable>:
-    UIView, UICollectionViewDelegate, UICollectionViewDelegateFlowLayout, UIScrollViewDelegate
-    where Value: Comparable {
+class CollectionPickerView<Cell: UICollectionViewCell, Center: UIView, Value: Hashable & Comparable>:
+UIView, UICollectionViewDelegate, UICollectionViewDelegateFlowLayout, UIScrollViewDelegate {
     var values: [Value] = [] {
         didSet {
             if self.values != oldValue {
@@ -22,12 +21,11 @@ class CollectionPickerView<Cell: UICollectionViewCell, Center: UIView, Value: Ha
         let cellRegistration = UICollectionView.CellRegistration<Cell, Value> { cell, _, value in
             self.configureCell(cell, value)
         }
-        let dataSource = UICollectionViewDiffableDataSource<Int, Value>(collectionView: self.collectionView) { collectionView, indexPath, id in
+        return UICollectionViewDiffableDataSource<Int, Value>(collectionView: self.collectionView) { collectionView, indexPath, id in
             collectionView.dequeueConfiguredReusableCell(using: cellRegistration,
                                                          for: indexPath,
                                                          item: id)
         }
-        return dataSource
     }()
 
     private lazy var sizingCell = Cell()
