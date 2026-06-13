@@ -59,7 +59,7 @@ struct PickerWrapper<Cell: View, Center: View, Value: Hashable & Comparable>: UI
 class PickerModel<Value: Hashable> {
     @Binding var selected: Value
 
-    private var cancallable: AnyCancellable?
+    private var cancellable: AnyCancellable?
 
     let onScroll: (Value, Value) -> Void
     init(selected: Binding<Value>, onScroll: @escaping (Value, Value) -> Void) {
@@ -68,12 +68,14 @@ class PickerModel<Value: Hashable> {
     }
 
     func listing<P: Publisher>(to publisher: P) where P.Output == Value, P.Failure == Never {
-        DispatchQueue.main.async {
-            self.cancallable?.cancel()
-            self.cancallable = publisher
-                .sink(receiveValue: { [weak self] value in
-                    if let self, self.selected != value {
-                        self.onScroll(self.selected, value)
+        DispatchQueue.main.async { [weak self] in
+            guard let self else { return }
+
+            self.cancellable?.cancel()
+            self.cancellable = publisher
+            .sink(receiveValue: { [weak self] value in
+                if let self, self.selected != value {
+                    self.onScroll(self.selected, value)
                         self.selected = value
                     }
                 })
