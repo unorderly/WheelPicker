@@ -103,6 +103,8 @@ UIView, UICollectionViewDelegate, UICollectionViewDelegateFlowLayout, UIScrollVi
         cv.showsHorizontalScrollIndicator = false
         cv.showsVerticalScrollIndicator = false
         cv.decelerationRate = UIScrollView.DecelerationRate.normal
+        // A tap on the status bar would otherwise scroll the wheel to its first value.
+        cv.scrollsToTop = false
         cv.backgroundColor = .clear
         cv.layer.sublayerTransform = {
             var transform = CATransform3DIdentity
